@@ -1,17 +1,67 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr" translate="no" class="notranslate">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>3D Anatomy — World Nursing</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self';">
-<style>
-  html, body { margin:0; padding:0; height:100%; background:#0e1620; }
-  #anatomy-viewer-root { height:100vh; width:100vw; }
-/* anatomy.css — Phase 1 UI. Uses the host site's existing CSS variables
-   (--accent-color, --glass-bg, --glass-border, --border-radius-xl,
-   --text-secondary) so it inherits every theme (dark/light/etc.) for free. */
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Nursing World - 3D Anatomy Atlas">
+  <meta name="google" content="notranslate">
+  <meta name="theme-color" content="#1a6fc4">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <title>Anatomy Atlas — Nursing World</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', 'Noto Sans', Arial, sans-serif !important;
+    }
+    :root {
+      /* ═══ THEME 1: PURE WHITE — ثيم أبيض فاخر ═══ */
+      --bg-primary: #f5f8ff; --bg-secondary: #ffffff; --text-primary: #0a1628; --text-secondary: #354a6e;
+      --accent-color: #1a6fc4; --accent-hover: #0f52a0; --accent-light: rgba(26,111,196,0.10);
+      --glass-bg: rgba(255,255,255,0.92); --glass-border: rgba(26,111,196,0.16);
+      --box-shadow: 0 20px 40px -12px rgba(26,111,196,0.13);
+      --glow-success: #10b981; --glow-warning: #f59e0b; --glow-danger: #ef4444; --glow-critical: #dc2626;
+      --border-radius-xl: 28px; --border-radius-md: 20px; --glass-blur: 20px;
+      --gold-border: #ffd700; --gold-glow: 0 0 12px rgba(255,215,0,0.6);
+      --theme-gradient: linear-gradient(135deg, #f5f8ff 0%, #e8efff 50%, #f0f5ff 100%);
+    }
+    /* ═══ THEME 2: DEEP BLACK — ثيم أسود أنيق ═══ */
+    [data-theme="dark"] {
+      --bg-primary: #080c14; --bg-secondary: #0d1220; --text-primary: #f0f4ff; --text-secondary: #c8d4ec;
+      --accent-color: #38bdf8; --accent-hover: #0ea5e9; --accent-light: rgba(56,189,248,0.15);
+      --glass-bg: rgba(8,12,20,0.96); --glass-border: rgba(56,189,248,0.22);
+      --box-shadow: 0 20px 40px -12px rgba(0,0,0,0.5);
+      --theme-gradient: linear-gradient(135deg, #080c14 0%, #0d1525 50%, #090e18 100%);
+    }
+    /* ═══ THEME 3: ROYAL GOLD — ثيم ذهبي طبي فاخر ═══ */
+    [data-theme="gold"] {
+      --bg-primary: #0f0a00; --bg-secondary: #1a1200; --text-primary: #fff8e1; --text-secondary: #ffd96a;
+      --accent-color: #f5c518; --accent-hover: #e6b800; --accent-light: rgba(245,197,24,0.15);
+      --glass-bg: rgba(15,10,0,0.95); --glass-border: rgba(245,197,24,0.30);
+      --box-shadow: 0 20px 40px -12px rgba(245,197,24,0.20);
+      --theme-gradient: linear-gradient(135deg, #0f0a00 0%, #1e1400 50%, #120d00 100%);
+    }
+    /* ═══ THEME 4: COSMIC PURPLE — ثيم بنفسجي كوني ═══ */
+    [data-theme="purple"] {
+      --bg-primary: #07041a; --bg-secondary: #0e0a2a; --text-primary: #f0edff; --text-secondary: #c4b8f0;
+      --accent-color: #a78bfa; --accent-hover: #8b5cf6; --accent-light: rgba(167,139,250,0.15);
+      --glass-bg: rgba(7,4,26,0.96); --glass-border: rgba(167,139,250,0.25);
+      --box-shadow: 0 20px 40px -12px rgba(139,92,246,0.25);
+      --theme-gradient: linear-gradient(135deg, #07041a 0%, #100730 50%, #08051f 100%);
+    }
+    html, body { height: 100%; background: var(--bg-primary, #080c14); color: var(--text-primary, #f0f4ff); overflow: hidden; }
+    #anatomy-back-bar {
+      display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+      background: var(--glass-bg, rgba(8,12,20,0.96)); border-bottom: 1px solid var(--glass-border, rgba(56,189,248,0.22));
+      position: sticky; top: 0; z-index: 50; height: 52px;
+    }
+    #anatomy-back-bar a.back-link {
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+      color: var(--accent-color, #38bdf8); font-weight: 800; font-size: 0.95rem;
+      padding: 6px 12px; border-radius: 30px; border: 1px solid var(--glass-border, rgba(56,189,248,0.3));
+      white-space: nowrap;
+    }
+    #anatomy-back-bar .abb-title { font-weight: 900; color: var(--accent-color, #38bdf8); font-size: 0.95rem; }
 #anatomy-section {
   padding: 0;
 }
@@ -286,18 +336,51 @@
   .anatomy-injection-panel { width: 100%; max-height: 46%; border-inline-start: none; border-top: 1px solid var(--glass-border, rgba(255,255,255,0.08)); }
 }
 
-</style>
+/* ── Gender switch + auto-rotate (polish additions) ─────────────── */
+.anatomy-gender-switch { display: flex; gap: 6px; }
+.anatomy-gender-btn {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.anatomy-gender-btn.active { background: rgba(236,72,153,0.3); color: #fff; border-color: rgba(236,72,153,0.55); }
+.anatomy-viewctrl button.active { background: rgba(59,130,246,0.4); border-color: rgba(59,130,246,0.7); }
+    /* Full-page overrides (this page is not embedded in the site's SPA container) */
+    .anatomy-root { height: calc(100vh - 52px); min-height: 460px; border-radius: 0; }
+  </style>
 </head>
 <body>
-<div id="anatomy-viewer-root"></div>
-
+  <div id="anatomy-back-bar">
+    <a href="index.html" class="back-link" id="anatomy-back-link">← <span id="anatomy-back-label">العودة للموقع</span></a>
+    <span class="abb-title" id="anatomy-page-title">🧬 المستكشف التشريحي 3D</span>
+  </div>
+  <div id="anatomy-section" class="section" style="padding:0;">
+    <div id="anatomy-viewer-root"></div>
+  </div>
+  <script>
+    (function () {
+      var lang = localStorage.getItem('language') || 'en';
+      var theme = localStorage.getItem('theme') || 'light';
+      window.currentLang = lang;
+      document.documentElement.setAttribute('lang', lang);
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      if (theme && theme !== 'light') document.documentElement.setAttribute('data-theme', theme);
+      var isAr = lang === 'ar';
+      document.getElementById('anatomy-back-label').textContent = isAr ? 'العودة للموقع' : 'Back to site';
+      document.getElementById('anatomy-page-title').textContent = isAr ? '🧬 المستكشف التشريحي 3D' : '🧬 3D Anatomy Explorer';
+      document.title = isAr ? 'أطلس التشريح — Nursing World' : 'Anatomy Atlas — Nursing World';
+    })();
+  </script>
 <!-- ═══════════════════════════════════════════════════════════════
-     ANATOMY MASTER SYSTEM — standalone single-file build.
-     This file is 100% self-contained (all modules merged inline) so it
-     can be uploaded as ONE flat file next to index.html — no subfolders,
-     no separate JS/CSS files, nothing for a folder-upload tool to drop.
-     To add a real anatomical model later, upload a single "body.glb"
-     file in the SAME folder as this file (still flat, no subfolder).
+     ANATOMY MASTER SYSTEM — fully inline (no external files, no iframe).
+     Nothing here runs until AnatomyAPI.open() is called from
+     switchTab('anatomy'), so it costs zero perf on every other tab.
+     To add a real anatomical model later, drop a single "body.glb" file
+     next to this index.html (flat, no subfolder needed).
      ═══════════════════════════════════════════════════════════════ -->
 <script type="importmap">
 {
@@ -572,6 +655,364 @@ const PARTS = [
     innervation: { ar: 'مستقبلات حسية جلدية متعددة (لمس، ألم، حرارة).', en: 'Multiple cutaneous sensory receptors (touch, pain, temperature).' },
     relatedDiseases: { ar: ['الإكزيما', 'الحروق', 'قرح الفراش'], en: ['Eczema', 'Burns', 'Pressure ulcers'] },
   },
+
+  // ───── إضافات: مزيد من الأعضاء الداخلية ─────
+  {
+    id: 'pancreas', layer: 'organs', nodeNames: ['pancreas', 'bankiryas'],
+    names: { ar: 'البنكرياس', en: 'Pancreas', latin: 'Pancreas' },
+    function: { ar: 'إفراز الإنسولين والجلوكاجون لتنظيم السكر، وإفراز إنزيمات هضمية.', en: 'Secretes insulin and glucagon to regulate blood sugar, and digestive enzymes.' },
+    bloodSupply: { ar: 'الشرايين البنكرياسية الاثنا عشرية والطحالية.', en: 'Pancreaticoduodenal and splenic arteries.' },
+    innervation: { ar: 'الضفيرة الزعترية (جهاز عصبي ذاتي).', en: 'Celiac plexus (autonomic).' },
+    relatedDiseases: { ar: ['السكري', 'التهاب البنكرياس', 'سرطان البنكرياس'], en: ['Diabetes mellitus', 'Pancreatitis', 'Pancreatic cancer'] },
+    vitalsLink: 'glucose',
+  },
+  {
+    id: 'spleen', layer: 'organs', nodeNames: ['spleen', 'tihal'],
+    names: { ar: 'الطحال', en: 'Spleen', latin: 'Splen' },
+    function: { ar: 'تصفية الدم، تدمير خلايا الدم القديمة، وجزء من الجهاز المناعي.', en: 'Filters blood, removes old blood cells, and supports immune function.' },
+    bloodSupply: { ar: 'الشريان الطحالي.', en: 'Splenic artery.' },
+    innervation: { ar: 'الضفيرة الطحالية (جهاز عصبي ذاتي).', en: 'Splenic plexus (autonomic).' },
+    relatedDiseases: { ar: ['تضخم الطحال', 'تمزق الطحال', 'كثرة الوحيدات'], en: ['Splenomegaly', 'Splenic rupture', 'Mononucleosis'] },
+  },
+  {
+    id: 'gallbladder', layer: 'organs', nodeNames: ['gallbladder', 'marara'],
+    names: { ar: 'المرارة', en: 'Gallbladder', latin: 'Vesica biliaris' },
+    function: { ar: 'تخزين وتركيز العصارة الصفراوية القادمة من الكبد.', en: 'Stores and concentrates bile produced by the liver.' },
+    bloodSupply: { ar: 'الشريان المراري.', en: 'Cystic artery.' },
+    innervation: { ar: 'الضفيرة الكبدية (جهاز عصبي ذاتي).', en: 'Hepatic plexus (autonomic).' },
+    relatedDiseases: { ar: ['حصوات المرارة', 'التهاب المرارة'], en: ['Gallstones', 'Cholecystitis'] },
+  },
+  {
+    id: 'bladder', layer: 'organs', nodeNames: ['bladder', 'mathana'],
+    names: { ar: 'المثانة', en: 'Urinary Bladder', latin: 'Vesica urinaria' },
+    function: { ar: 'تخزين البول قبل طرحه خارج الجسم.', en: 'Stores urine before it is voided from the body.' },
+    bloodSupply: { ar: 'الشرايين المثانية العلوية والسفلية.', en: 'Superior and inferior vesical arteries.' },
+    innervation: { ar: 'الضفيرة المثانية (جهاز عصبي ذاتي وجسدي).', en: 'Vesical plexus (autonomic and somatic).' },
+    relatedDiseases: { ar: ['التهاب المثانة', 'سلس البول', 'حصوات المثانة'], en: ['Cystitis', 'Urinary incontinence', 'Bladder stones'] },
+  },
+  {
+    id: 'thyroid', layer: 'organs', nodeNames: ['thyroid', 'daraqiya'],
+    names: { ar: 'الغدة الدرقية', en: 'Thyroid Gland', latin: 'Glandula thyroidea' },
+    function: { ar: 'إفراز هرمونات تنظّم معدل الأيض في الجسم.', en: 'Secretes hormones that regulate the body\'s metabolic rate.' },
+    bloodSupply: { ar: 'الشرايين الدرقية العلوية والسفلية.', en: 'Superior and inferior thyroid arteries.' },
+    innervation: { ar: 'أعصاب متعاطفة من العقدة الرقبية.', en: 'Sympathetic fibers from the cervical ganglia.' },
+    relatedDiseases: { ar: ['قصور الدرقية', 'فرط نشاط الدرقية', 'تضخم الدرقية'], en: ['Hypothyroidism', 'Hyperthyroidism', 'Goiter'] },
+  },
+  {
+    id: 'diaphragm', layer: 'organs', nodeNames: ['diaphragm', 'hijab'],
+    names: { ar: 'الحجاب الحاجز', en: 'Diaphragm', latin: 'Diaphragma' },
+    function: { ar: 'العضلة الرئيسية للتنفس؛ تفصل الصدر عن البطن وتنقبض للشهيق.', en: 'The main muscle of respiration; separates the thorax from the abdomen and contracts for inhalation.' },
+    bloodSupply: { ar: 'الشرايين الحجابية العلوية والسفلية.', en: 'Superior and inferior phrenic arteries.' },
+    innervation: { ar: 'العصب الحجابي (Phrenic nerve).', en: 'Phrenic nerve.' },
+    relatedDiseases: { ar: ['الفتق الحجابي', 'شلل الحجاب الحاجز'], en: ['Diaphragmatic hernia', 'Diaphragm paralysis'] },
+  },
+  {
+    id: 'trachea', layer: 'organs', nodeNames: ['trachea', 'qasaba'],
+    names: { ar: 'القصبة الهوائية', en: 'Trachea', latin: 'Trachea' },
+    function: { ar: 'قناة تمرّ عبرها الهواء من الحنجرة إلى الشعب الهوائية.', en: 'Airway conducting air from the larynx to the bronchi.' },
+    bloodSupply: { ar: 'الشرايين الدرقية السفلية والقصبية.', en: 'Inferior thyroid and bronchial arteries.' },
+    innervation: { ar: 'العصب المبهم والودي الرقبي.', en: 'Vagus nerve and cervical sympathetic trunk.' },
+    relatedDiseases: { ar: ['التهاب القصبة', 'انسداد مجرى الهواء'], en: ['Tracheitis', 'Airway obstruction'] },
+  },
+  {
+    id: 'esophagus', layer: 'organs', nodeNames: ['esophagus', 'marii'],
+    names: { ar: 'المريء', en: 'Esophagus', latin: 'Esophagus' },
+    function: { ar: 'أنبوب عضلي ينقل الطعام من البلعوم إلى المعدة عبر تقلصات تمعجية.', en: 'Muscular tube that carries food from the pharynx to the stomach via peristalsis.' },
+    bloodSupply: { ar: 'فروع من الشريان الأبهر والشرايين المعدية.', en: 'Branches of the aorta and gastric arteries.' },
+    innervation: { ar: 'الضفيرة المريئية (العصب المبهم والودي).', en: 'Esophageal plexus (vagal and sympathetic).' },
+    relatedDiseases: { ar: ['الارتجاع المريئي', 'دوالي المريء', 'صعوبة البلع'], en: ['GERD', 'Esophageal varices', 'Dysphagia'] },
+  },
+  {
+    id: 'small_intestine', layer: 'organs', nodeNames: ['smallintestine', 'amaadaqiqa'],
+    names: { ar: 'الأمعاء الدقيقة', en: 'Small Intestine', latin: 'Intestinum tenue' },
+    function: { ar: 'الموقع الرئيسي لهضم الطعام وامتصاص العناصر الغذائية.', en: 'The main site of food digestion and nutrient absorption.' },
+    bloodSupply: { ar: 'الشريان المساريقي العلوي.', en: 'Superior mesenteric artery.' },
+    innervation: { ar: 'الضفيرة المساريقية العلوية (جهاز عصبي ذاتي).', en: 'Superior mesenteric plexus (autonomic).' },
+    relatedDiseases: { ar: ['داء كرون', 'انسداد الأمعاء', 'سوء الامتصاص'], en: ['Crohn\'s disease', 'Bowel obstruction', 'Malabsorption'] },
+  },
+  {
+    id: 'large_intestine', layer: 'organs', nodeNames: ['largeintestine', 'qoloon'],
+    names: { ar: 'الأمعاء الغليظة (القولون)', en: 'Large Intestine (Colon)', latin: 'Intestinum crassum' },
+    function: { ar: 'امتصاص الماء والكهارل، وتشكيل وتخزين البراز.', en: 'Absorbs water and electrolytes, and forms/stores feces.' },
+    bloodSupply: { ar: 'الشريانان المساريقيان العلوي والسفلي.', en: 'Superior and inferior mesenteric arteries.' },
+    innervation: { ar: 'جهاز عصبي ذاتي مختلط (متعاطف ونظير متعاطف).', en: 'Mixed autonomic innervation (sympathetic and parasympathetic).' },
+    relatedDiseases: { ar: ['القولون العصبي', 'التهاب القولون التقرحي', 'سرطان القولون'], en: ['IBS', 'Ulcerative colitis', 'Colon cancer'] },
+  },
+  {
+    id: 'spinal_cord', layer: 'nerves', nodeNames: ['spinalcord', 'nukha'],
+    names: { ar: 'النخاع الشوكي', en: 'Spinal Cord', latin: 'Medulla spinalis' },
+    function: { ar: 'نقل الإشارات العصبية بين الدماغ والجسم، ومركز المنعكسات.', en: 'Relays nerve signals between the brain and body, and mediates reflexes.' },
+    bloodSupply: { ar: 'الشريان الشوكي الأمامي والشريانان الخلفيان.', en: 'Anterior and posterior spinal arteries.' },
+    innervation: { ar: 'يصدر منه 31 زوجًا من الأعصاب الشوكية.', en: 'Origin of 31 pairs of spinal nerves.' },
+    relatedDiseases: { ar: ['إصابة النخاع الشوكي', 'التصلب المتعدد'], en: ['Spinal cord injury', 'Multiple sclerosis'] },
+  },
+  {
+    id: 'uterus', layer: 'organs', nodeNames: ['uterus', 'rahim'],
+    names: { ar: 'الرحم', en: 'Uterus', latin: 'Uterus' },
+    function: { ar: 'عضو تكاثري أنثوي يحتضن الجنين أثناء الحمل.', en: 'Female reproductive organ that houses the fetus during pregnancy.' },
+    bloodSupply: { ar: 'الشريان الرحمي.', en: 'Uterine artery.' },
+    innervation: { ar: 'الضفيرة الرحمية المهبلية (جهاز عصبي ذاتي).', en: 'Uterovaginal plexus (autonomic).' },
+    relatedDiseases: { ar: ['الأورام الليفية', 'بطانة الرحم المهاجرة'], en: ['Uterine fibroids', 'Endometriosis'] },
+  },
+  {
+    id: 'ovaries', layer: 'organs', nodeNames: ['ovary', 'mabid'],
+    names: { ar: 'المبيضان', en: 'Ovaries', latin: 'Ovaria' },
+    function: { ar: 'إنتاج البويضات وهرمونات الإستروجين والبروجسترون.', en: 'Produce ova and the hormones estrogen and progesterone.' },
+    bloodSupply: { ar: 'الشريان المبيضي.', en: 'Ovarian artery.' },
+    innervation: { ar: 'الضفيرة المبيضية (جهاز عصبي ذاتي).', en: 'Ovarian plexus (autonomic).' },
+    relatedDiseases: { ar: ['متلازمة تكيس المبايض', 'كيس المبيض'], en: ['Polycystic ovary syndrome', 'Ovarian cyst'] },
+  },
+  {
+    id: 'prostate', layer: 'organs', nodeNames: ['prostate', 'burustata'],
+    names: { ar: 'البروستاتا', en: 'Prostate Gland', latin: 'Prostata' },
+    function: { ar: 'إفراز سائل يشكّل جزءًا من السائل المنوي.', en: 'Secretes fluid that forms part of the seminal fluid.' },
+    bloodSupply: { ar: 'الشريان البروستاتي (فرع من المثاني السفلي).', en: 'Prostatic branch of the inferior vesical artery.' },
+    innervation: { ar: 'الضفيرة البروستاتية (جهاز عصبي ذاتي).', en: 'Prostatic plexus (autonomic).' },
+    relatedDiseases: { ar: ['تضخم البروستاتا الحميد', 'التهاب البروستاتا', 'سرطان البروستاتا'], en: ['Benign prostatic hyperplasia', 'Prostatitis', 'Prostate cancer'] },
+  },
+  {
+    id: 'testes', layer: 'organs', nodeNames: ['testis', 'khusya'],
+    names: { ar: 'الخصيتان', en: 'Testes', latin: 'Testes' },
+    function: { ar: 'إنتاج الحيوانات المنوية وهرمون التستوستيرون.', en: 'Produce sperm and the hormone testosterone.' },
+    bloodSupply: { ar: 'الشريان الخصوي.', en: 'Testicular artery.' },
+    innervation: { ar: 'الضفيرة الخصوية (جهاز عصبي ذاتي).', en: 'Testicular plexus (autonomic).' },
+    relatedDiseases: { ar: ['التواء الخصية', 'دوالي الخصية'], en: ['Testicular torsion', 'Varicocele'] },
+  },
+
+  // ───── إضافات: عظام مفصّلة ─────
+  {
+    id: 'skull', layer: 'skeleton', nodeNames: ['skull', 'jumjuma'],
+    names: { ar: 'الجمجمة', en: 'Skull', latin: 'Cranium' },
+    function: { ar: 'حماية الدماغ وتشكيل ملامح الوجه.', en: 'Protects the brain and forms the framework of the face.' },
+    bloodSupply: { ar: 'الشرايين السحائية والقحفية.', en: 'Meningeal and calvarial arteries.' },
+    innervation: { ar: 'أعصاب حسية من الأعصاب القحفية.', en: 'Sensory branches of the cranial nerves.' },
+    relatedDiseases: { ar: ['كسور الجمجمة', 'التهاب الجيوب'], en: ['Skull fractures', 'Sinusitis'] },
+  },
+  {
+    id: 'vertebral_column', layer: 'skeleton', nodeNames: ['vertebra', 'amoud_faqari'],
+    names: { ar: 'العمود الفقري', en: 'Vertebral Column', latin: 'Columna vertebralis' },
+    function: { ar: 'دعم الجذع، حماية النخاع الشوكي، والسماح بالحركة.', en: 'Supports the trunk, protects the spinal cord, and allows movement.' },
+    bloodSupply: { ar: 'الشرايين القطنية والفقرية.', en: 'Lumbar and vertebral arteries.' },
+    innervation: { ar: 'الأعصاب الشوكية الخارجة بين الفقرات.', en: 'Spinal nerves exiting between vertebrae.' },
+    relatedDiseases: { ar: ['الانزلاق الغضروفي', 'الجنف', 'هشاشة العظام'], en: ['Herniated disc', 'Scoliosis', 'Osteoporosis'] },
+  },
+  {
+    id: 'ribcage', layer: 'skeleton', nodeNames: ['rib', 'qafas_sadri'],
+    names: { ar: 'القفص الصدري', en: 'Ribcage', latin: 'Cavea thoracis' },
+    function: { ar: 'حماية القلب والرئتين، والمساهمة في حركة التنفس.', en: 'Protects the heart and lungs, and assists breathing movements.' },
+    bloodSupply: { ar: 'الشرايين الوربية.', en: 'Intercostal arteries.' },
+    innervation: { ar: 'الأعصاب الوربية.', en: 'Intercostal nerves.' },
+    relatedDiseases: { ar: ['كسور الأضلاع', 'التهاب الغضروف الضلعي'], en: ['Rib fractures', 'Costochondritis'] },
+  },
+  {
+    id: 'pelvis_bone', layer: 'skeleton', nodeNames: ['pelvis', 'hawd'],
+    names: { ar: 'عظام الحوض', en: 'Pelvic Bones', latin: 'Os coxae' },
+    function: { ar: 'ربط العمود الفقري بالأطراف السفلية وحماية أعضاء الحوض.', en: 'Connects the spine to the lower limbs and protects the pelvic organs.' },
+    bloodSupply: { ar: 'الشرايين الحرقفية الداخلية والخارجية.', en: 'Internal and external iliac arteries.' },
+    innervation: { ar: 'الضفيرة العجزية.', en: 'Sacral plexus.' },
+    relatedDiseases: { ar: ['كسور الحوض', 'التهاب المفصل العجزي الحرقفي'], en: ['Pelvic fractures', 'Sacroiliitis'] },
+  },
+  {
+    id: 'arm_bones', layer: 'skeleton', nodeNames: ['armbone', 'humerus', 'radius', 'ulna'],
+    names: { ar: 'عظام الذراع', en: 'Arm Bones', latin: 'Humerus, Radius, Ulna' },
+    function: { ar: 'الدعامة الهيكلية للطرف العلوي وربطه بمفصلي الكتف والمرفق.', en: 'Skeletal support of the upper limb, forming the shoulder and elbow joints.' },
+    bloodSupply: { ar: 'الشريان العضدي وفروعه.', en: 'Brachial artery and its branches.' },
+    innervation: { ar: 'أعصاب الضفيرة العضدية (الكعبري، الزندي، الناصف).', en: 'Brachial plexus nerves (radial, ulnar, median).' },
+    relatedDiseases: { ar: ['كسر عظم العضد', 'خلع المرفق'], en: ['Humeral fracture', 'Elbow dislocation'] },
+  },
+  {
+    id: 'leg_bones', layer: 'skeleton', nodeNames: ['legbone', 'femur', 'tibia', 'fibula'],
+    names: { ar: 'عظام الساق', en: 'Leg Bones', latin: 'Femur, Tibia, Fibula' },
+    function: { ar: 'الدعامة الهيكلية للطرف السفلي وحمل وزن الجسم.', en: 'Skeletal support of the lower limb and weight-bearing.' },
+    bloodSupply: { ar: 'الشريان الفخذي والشريان المأبضي.', en: 'Femoral and popliteal arteries.' },
+    innervation: { ar: 'العصب الفخذي والعصب الوركي.', en: 'Femoral nerve and sciatic nerve.' },
+    relatedDiseases: { ar: ['كسر عظم الفخذ', 'التهاب المفصل الركبي'], en: ['Femoral fracture', 'Knee osteoarthritis'] },
+  },
+
+  // ───── إضافات: مجموعات عضلية رئيسية ─────
+  {
+    id: 'chest_muscles', layer: 'muscles', nodeNames: ['chestmuscle', 'pectoralis'],
+    names: { ar: 'العضلة الصدرية الكبرى', en: 'Pectoralis Major', latin: 'Musculus pectoralis major' },
+    function: { ar: 'تحريك مفصل الكتف (التقريب والدوران الداخلي).', en: 'Moves the shoulder joint (adduction and internal rotation).' },
+    bloodSupply: { ar: 'الشريان الصدري الوحشي.', en: 'Lateral thoracic artery.' },
+    innervation: { ar: 'العصبان الصدريان الإنسي والوحشي.', en: 'Medial and lateral pectoral nerves.' },
+    relatedDiseases: { ar: ['تمزق العضلة الصدرية'], en: ['Pectoral muscle tear'] },
+  },
+  {
+    id: 'shoulder_muscles', layer: 'muscles', nodeNames: ['deltoid'],
+    names: { ar: 'العضلة الدالية', en: 'Deltoid Muscle', latin: 'Musculus deltoideus' },
+    function: { ar: 'رفع وتدوير الذراع عند مفصل الكتف.', en: 'Abducts and rotates the arm at the shoulder joint.' },
+    bloodSupply: { ar: 'الشريان الدائري العضدي الخلفي.', en: 'Posterior circumflex humeral artery.' },
+    innervation: { ar: 'العصب الإبطي (Axillary nerve).', en: 'Axillary nerve.' },
+    relatedDiseases: { ar: ['التهاب الوتر الدالي', 'موقع حقن شائع'], en: ['Deltoid tendinitis', 'Common IM injection site'] },
+  },
+  {
+    id: 'arm_muscles', layer: 'muscles', nodeNames: ['bicep', 'tricep'],
+    names: { ar: 'العضلة ذات الرأسين والثلاث رؤوس', en: 'Biceps & Triceps Brachii', latin: 'Biceps/Triceps brachii' },
+    function: { ar: 'ثني ومد مفصل المرفق.', en: 'Flex and extend the elbow joint.' },
+    bloodSupply: { ar: 'الشريان العضدي.', en: 'Brachial artery.' },
+    innervation: { ar: 'العصب العضلي الجلدي والعصب الكعبري.', en: 'Musculocutaneous and radial nerves.' },
+    relatedDiseases: { ar: ['تمزق العضلة ذات الرأسين'], en: ['Biceps tendon rupture'] },
+  },
+  {
+    id: 'abdominal_muscles', layer: 'muscles', nodeNames: ['abs', 'rectusabdominis'],
+    names: { ar: 'عضلات البطن المستقيمة', en: 'Rectus Abdominis', latin: 'Musculus rectus abdominis' },
+    function: { ar: 'ثني الجذع ودعم جدار البطن.', en: 'Flexes the trunk and supports the abdominal wall.' },
+    bloodSupply: { ar: 'الشرايين البطنية العلوية والسفلية.', en: 'Superior and inferior epigastric arteries.' },
+    innervation: { ar: 'الأعصاب الوربية السفلية.', en: 'Lower intercostal nerves.' },
+    relatedDiseases: { ar: ['الفتق السري', 'انفصال عضلات البطن'], en: ['Umbilical hernia', 'Diastasis recti'] },
+  },
+  {
+    id: 'thigh_muscles', layer: 'muscles', nodeNames: ['quadriceps', 'hamstring'],
+    names: { ar: 'العضلة الرباعية وأوتار الركبة', en: 'Quadriceps & Hamstrings', latin: 'Quadriceps femoris / Hamstrings' },
+    function: { ar: 'مد وثني مفصل الركبة.', en: 'Extend and flex the knee joint.' },
+    bloodSupply: { ar: 'الشريان الفخذي العميق.', en: 'Deep femoral artery.' },
+    innervation: { ar: 'العصب الفخذي والعصب الوركي.', en: 'Femoral nerve and sciatic nerve.' },
+    relatedDiseases: { ar: ['تمزق أوتار الركبة', 'إجهاد العضلة الرباعية'], en: ['Hamstring tear', 'Quadriceps strain'] },
+  },
+  {
+    id: 'gluteal_muscles', layer: 'muscles', nodeNames: ['gluteus'],
+    names: { ar: 'العضلات الألوية', en: 'Gluteal Muscles', latin: 'Musculi glutei' },
+    function: { ar: 'مد وتبعيد مفصل الورك، ودعم الوقوف والمشي.', en: 'Extend and abduct the hip joint, supporting standing and walking.' },
+    bloodSupply: { ar: 'الشرايين الألوية العلوية والسفلية.', en: 'Superior and inferior gluteal arteries.' },
+    innervation: { ar: 'الأعصاب الألوية العلوية والسفلية.', en: 'Superior and inferior gluteal nerves.' },
+    relatedDiseases: { ar: ['موقع حقن شائع (Dorsogluteal/Ventrogluteal)'], en: ['Common IM injection site (dorso/ventrogluteal)'] },
+  },
+  {
+    id: 'calf_muscles', layer: 'muscles', nodeNames: ['gastrocnemius', 'calf'],
+    names: { ar: 'عضلة الساق (بطة الساق)', en: 'Gastrocnemius (Calf)', latin: 'Musculus gastrocnemius' },
+    function: { ar: 'ثني القدم للأسفل (Plantar flexion) والدفع أثناء المشي والجري.', en: 'Plantarflexes the foot; powers push-off during walking and running.' },
+    bloodSupply: { ar: 'الشريان المأبضي وفروعه.', en: 'Popliteal artery branches.' },
+    innervation: { ar: 'العصب الظنبوبي (فرع من العصب الوركي).', en: 'Tibial nerve (branch of the sciatic nerve).' },
+    relatedDiseases: { ar: ['تمزق عضلة الساق', 'تشنج الساق'], en: ['Calf strain', 'Muscle cramps'] },
+  },
+  {
+    id: 'forearm_muscles', layer: 'muscles', nodeNames: ['forearm', 'flexor'],
+    names: { ar: 'عضلات الساعد', en: 'Forearm Muscles', latin: 'Musculi antebrachii' },
+    function: { ar: 'ثني ومد الرسغ والأصابع، وكب ولفّ الساعد.', en: 'Flex/extend the wrist and fingers, and pronate/supinate the forearm.' },
+    bloodSupply: { ar: 'الشريانان الكعبري والزندي.', en: 'Radial and ulnar arteries.' },
+    innervation: { ar: 'الأعصاب الناصف والزندي والكعبري.', en: 'Median, ulnar, and radial nerves.' },
+    relatedDiseases: { ar: ['التهاب لقيمة العضد (مرفق التنس)', 'متلازمة النفق الرسغي'], en: ['Tennis elbow', 'Carpal tunnel syndrome'] },
+  },
+  {
+    id: 'back_muscles', layer: 'muscles', nodeNames: ['trapezius', 'latissimus'],
+    names: { ar: 'عضلات الظهر (شبه المنحرفة وواسعة الظهر)', en: 'Trapezius & Latissimus Dorsi', latin: 'Trapezius / Latissimus dorsi' },
+    function: { ar: 'تحريك لوح الكتف والعمود الفقري، وتقريب ولفّ الذراع للداخل.', en: 'Move the scapula and spine; adduct and internally rotate the arm.' },
+    bloodSupply: { ar: 'الشريان الظهري للكتف والشريان الصدري الظهري.', en: 'Dorsal scapular and thoracodorsal arteries.' },
+    innervation: { ar: 'العصب الإضافي والعصب الصدري الظهري.', en: 'Accessory nerve and thoracodorsal nerve.' },
+    relatedDiseases: { ar: ['شد عضلي في الظهر', 'التهاب الوتر الكتفي'], en: ['Back muscle strain', 'Scapular tendinitis'] },
+  },
+  {
+    id: 'oblique_muscles', layer: 'muscles', nodeNames: ['oblique'],
+    names: { ar: 'العضلات المائلة البطنية', en: 'Abdominal Obliques', latin: 'Musculi obliqui abdominis' },
+    function: { ar: 'لفّ وثني الجذع جانبيًا، ودعم جدار البطن.', en: 'Rotate and laterally flex the trunk; support the abdominal wall.' },
+    bloodSupply: { ar: 'الشرايين الوربية السفلية والبطنية.', en: 'Lower intercostal and epigastric arteries.' },
+    innervation: { ar: 'الأعصاب الوربية السفلية والحرقفية.', en: 'Lower intercostal and iliohypogastric nerves.' },
+    relatedDiseases: { ar: ['شد العضلة المائلة', 'الفتق الأربي'], en: ['Oblique strain', 'Inguinal hernia'] },
+  },
+
+  // ───── إضافات: تفاصيل عظمية إضافية ─────
+  {
+    id: 'clavicle_scapula', layer: 'skeleton', nodeNames: ['clavicle', 'scapula'],
+    names: { ar: 'الترقوة ولوح الكتف', en: 'Clavicle & Scapula', latin: 'Clavicula / Scapula' },
+    function: { ar: 'ربط الطرف العلوي بالجذع وتشكيل مفصل الكتف.', en: 'Connects the upper limb to the trunk and forms the shoulder girdle.' },
+    bloodSupply: { ar: 'الشريان الصدري الحقاني.', en: 'Thoracoacromial artery.' },
+    innervation: { ar: 'العصب فوق الكتف والعصب الصدري الجانبي.', en: 'Suprascapular and lateral pectoral nerves.' },
+    relatedDiseases: { ar: ['كسر الترقوة', 'خلع مفصل الكتف'], en: ['Clavicle fracture', 'Shoulder dislocation'] },
+  },
+  {
+    id: 'hand_bones', layer: 'skeleton', nodeNames: ['carpal', 'metacarpal', 'phalanx'],
+    names: { ar: 'عظام اليد', en: 'Hand Bones', latin: 'Ossa manus' },
+    function: { ar: 'تتيح الحركة الدقيقة والقبض، وتتكون من الرسغ والمشط والسلاميات.', en: 'Enable fine motor movement and grip; comprise carpals, metacarpals, and phalanges.' },
+    bloodSupply: { ar: 'القوسان الراحيان السطحي والعميق.', en: 'Superficial and deep palmar arches.' },
+    innervation: { ar: 'الأعصاب الناصف والزندي والكعبري.', en: 'Median, ulnar, and radial nerves.' },
+    relatedDiseases: { ar: ['كسور الرسغ', 'التهاب المفاصل في اليد'], en: ['Wrist fractures', 'Hand osteoarthritis'] },
+  },
+  {
+    id: 'foot_bones', layer: 'skeleton', nodeNames: ['tarsal', 'metatarsal'],
+    names: { ar: 'عظام القدم', en: 'Foot Bones', latin: 'Ossa pedis' },
+    function: { ar: 'حمل وزن الجسم وامتصاص الصدمات أثناء المشي، وتتكون من الرصغ والمشط والسلاميات.', en: 'Bear body weight and absorb shock during walking; comprise tarsals, metatarsals, and phalanges.' },
+    bloodSupply: { ar: 'الشريانان الظهري للقدم والأخمصي.', en: 'Dorsalis pedis and plantar arteries.' },
+    innervation: { ar: 'العصبان الظنبوبي والشظوي.', en: 'Tibial and fibular (peroneal) nerves.' },
+    relatedDiseases: { ar: ['كسور إجهاد القدم', 'القدم المسطحة'], en: ['Foot stress fractures', 'Flat feet'] },
+  },
+
+  // ───── إضافات: أوعية دموية وأعصاب رئيسية ─────
+  {
+    id: 'aorta', layer: 'vessels', nodeNames: ['aorta'],
+    names: { ar: 'الشريان الأبهر', en: 'Aorta', latin: 'Aorta' },
+    function: { ar: 'أكبر شريان في الجسم؛ ينقل الدم المؤكسج من القلب إلى كل الجسم.', en: 'The body\'s largest artery; carries oxygenated blood from the heart to the whole body.' },
+    bloodSupply: { ar: 'يتفرع منه معظم الشرايين الكبرى في الجسم.', en: 'Gives rise to most of the body\'s major arteries.' },
+    innervation: { ar: 'ضفيرة أبهرية (جهاز عصبي ذاتي).', en: 'Aortic plexus (autonomic).' },
+    relatedDiseases: { ar: ['تمدد الأوعية الأبهري', 'تسلخ الأبهر'], en: ['Aortic aneurysm', 'Aortic dissection'] },
+  },
+  {
+    id: 'vena_cava', layer: 'vessels', nodeNames: ['venacava'],
+    names: { ar: 'الوريد الأجوف', en: 'Vena Cava', latin: 'Vena cava' },
+    function: { ar: 'ينقل الدم غير المؤكسج من الجسم إلى الأذين الأيمن للقلب.', en: 'Carries deoxygenated blood from the body back to the right atrium.' },
+    bloodSupply: { ar: 'يستقبل الدم من الأوردة الكبرى العلوية والسفلية.', en: 'Receives blood from major upper and lower body veins.' },
+    innervation: { ar: 'جهاز عصبي ذاتي محدود.', en: 'Minimal autonomic innervation.' },
+    relatedDiseases: { ar: ['تخثر الوريد الأجوف', 'انضغاط الوريد الأجوف'], en: ['Vena cava thrombosis', 'Vena cava compression'] },
+  },
+  {
+    id: 'carotid_artery', layer: 'vessels', nodeNames: ['carotid'],
+    names: { ar: 'الشريان السباتي', en: 'Carotid Artery', latin: 'Arteria carotis' },
+    function: { ar: 'التروية الدموية الرئيسية للرأس والرقبة والدماغ.', en: 'Main blood supply to the head, neck, and brain.' },
+    bloodSupply: { ar: 'يتفرع إلى السباتي الداخلي والخارجي.', en: 'Branches into internal and external carotid arteries.' },
+    innervation: { ar: 'الجيب السباتي (مستقبلات ضغط).', en: 'Carotid sinus (baroreceptors).' },
+    relatedDiseases: { ar: ['تصلب الشريان السباتي', 'السكتة الدماغية'], en: ['Carotid artery stenosis', 'Stroke'] },
+    vitalsLink: 'bp',
+  },
+  {
+    id: 'femoral_artery', layer: 'vessels', nodeNames: ['femoral'],
+    names: { ar: 'الشريان الفخذي', en: 'Femoral Artery', latin: 'Arteria femoralis' },
+    function: { ar: 'التروية الدموية الرئيسية للطرف السفلي.', en: 'Main blood supply to the lower limb.' },
+    bloodSupply: { ar: 'امتداد للشريان الحرقفي الخارجي.', en: 'Continuation of the external iliac artery.' },
+    innervation: { ar: 'مرافق للعصب الفخذي.', en: 'Accompanied by the femoral nerve.' },
+    relatedDiseases: { ar: ['أم الدم الفخذية', 'انسداد شرياني محيطي'], en: ['Femoral aneurysm', 'Peripheral arterial disease'] },
+  },
+  {
+    id: 'brachial_plexus', layer: 'nerves', nodeNames: ['brachialplexus'],
+    names: { ar: 'الضفيرة العضدية', en: 'Brachial Plexus', latin: 'Plexus brachialis' },
+    function: { ar: 'شبكة أعصاب تتحكم في حركة وإحساس الطرف العلوي.', en: 'Nerve network controlling movement and sensation of the upper limb.' },
+    bloodSupply: { ar: 'الشريان تحت الترقوة (مجاور).', en: 'Adjacent to the subclavian artery.' },
+    innervation: { ar: 'تنشأ من الجذور الشوكية C5–T1.', en: 'Arises from spinal roots C5–T1.' },
+    relatedDiseases: { ar: ['إصابة الضفيرة العضدية', 'شلل إرب'], en: ['Brachial plexus injury', 'Erb\'s palsy'] },
+  },
+  {
+    id: 'sciatic_nerve', layer: 'nerves', nodeNames: ['sciatic'],
+    names: { ar: 'العصب الوركي', en: 'Sciatic Nerve', latin: 'Nervus ischiadicus' },
+    function: { ar: 'أكبر عصب في الجسم؛ يتحكم في عضلات الفخذ الخلفي والساق والقدم.', en: 'The body\'s largest nerve; controls the posterior thigh, leg, and foot muscles.' },
+    bloodSupply: { ar: 'الشريان المصاحب للعصب الوركي.', en: 'Companion artery to the sciatic nerve.' },
+    innervation: { ar: 'ينشأ من الضفيرة العجزية (L4–S3).', en: 'Arises from the sacral plexus (L4–S3).' },
+    relatedDiseases: { ar: ['عرق النسا (Sciatica)', 'انضغاط العصب الوركي'], en: ['Sciatica', 'Sciatic nerve compression'] },
+  },
+  {
+    id: 'vagus_nerve', layer: 'nerves', nodeNames: ['vagus'],
+    names: { ar: 'العصب المبهم', en: 'Vagus Nerve', latin: 'Nervus vagus' },
+    function: { ar: 'أطول عصب قحفي؛ ينظم القلب والرئتين والجهاز الهضمي (جهاز عصبي نظير متعاطف).', en: 'Longest cranial nerve; regulates the heart, lungs, and digestive tract (parasympathetic).' },
+    bloodSupply: { ar: 'مرافق للشريان السباتي في الرقبة.', en: 'Runs alongside the carotid artery in the neck.' },
+    innervation: { ar: 'العصب القحفي العاشر (X).', en: 'The 10th cranial nerve (CN X).' },
+    relatedDiseases: { ar: ['اعتلال العصب المبهم', 'إغماء وعائي مبهمي'], en: ['Vagus nerve dysfunction', 'Vasovagal syncope'] },
+  },
+
+  // ───── إضافات: أعضاء صغيرة إضافية ─────
+  {
+    id: 'adrenal_glands', layer: 'organs', nodeNames: ['adrenal'],
+    names: { ar: 'الغدتان الكظريتان', en: 'Adrenal Glands', latin: 'Glandulae suprarenales' },
+    function: { ar: 'تقعان فوق الكليتين؛ تفرزان الكورتيزول والأدرينالين لتنظيم الإجهاد والتمثيل الغذائي.', en: 'Sit atop the kidneys; secrete cortisol and adrenaline to regulate stress response and metabolism.' },
+    bloodSupply: { ar: 'الشرايين الكظرية العلوية والوسطى والسفلية.', en: 'Superior, middle, and inferior suprarenal arteries.' },
+    innervation: { ar: 'أعصاب متعاطفة حشوية.', en: 'Splanchnic sympathetic nerves.' },
+    relatedDiseases: { ar: ['قصور الكظرية (أديسون)', 'متلازمة كوشينغ'], en: ['Adrenal insufficiency (Addison\'s)', 'Cushing\'s syndrome'] },
+  },
+  {
+    id: 'appendix', layer: 'organs', nodeNames: ['appendix'],
+    names: { ar: 'الزائدة الدودية', en: 'Appendix', latin: 'Appendix vermiformis' },
+    function: { ar: 'كيس صغير متصل بالأمعاء الغليظة، له دور مناعي محدود.', en: 'A small pouch attached to the colon with a limited immune role.' },
+    bloodSupply: { ar: 'الشريان الزائدي.', en: 'Appendicular artery.' },
+    innervation: { ar: 'الضفيرة المساريقية العلوية.', en: 'Superior mesenteric plexus.' },
+    relatedDiseases: { ar: ['التهاب الزائدة الدودية (الزائدة الحادة)'], en: ['Appendicitis'] },
+  },
 ];
 
 function findPartByNodeName(name) {
@@ -612,7 +1053,7 @@ const INJECTION_CATEGORIES = [
 // angle in degrees from the skin surface; depthLevel is one of shallow/medium/deep.
 const INJECTION_SITES = [
   {
-    id: 'deltoid', category: 'IM', anchor: [0.42, 1.45, 0.05],
+    id: 'deltoid', category: 'IM', anchor: [0.20, 1.32, 0.03],
     names: { ar: 'العضلة الدالية', en: 'Deltoid' },
     landmarks: { ar: 'أسفل الأخرم بمقدار 2-3 أصابع، مثلث بين العضلة الدالية.', en: '2–3 finger-widths below the acromion process, within the deltoid triangle.' },
     angle: { min: 72, max: 90 }, depthLevel: 'deep',
@@ -620,7 +1061,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'تجنب المنطقة العلوية القريبة من الأخرم — خطر إصابة العصب الإبطي.', en: 'Avoid the area high near the acromion — risk to the axillary nerve.' },
   },
   {
-    id: 'vastus_lateralis', category: 'IM', anchor: [0.2, 0.55, 0.02],
+    id: 'vastus_lateralis', category: 'IM', anchor: [0.16, 0.70, 0.02],
     names: { ar: 'الفخذ الوحشي المتسع', en: 'Vastus Lateralis' },
     landmarks: { ar: 'الثلث الأوسط من السطح الأمامي الوحشي للفخذ.', en: 'Middle third of the anterolateral thigh.' },
     angle: { min: 72, max: 90 }, depthLevel: 'deep',
@@ -628,7 +1069,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'موقع آمن نسبيًا؛ يُفضّل للرضع والأطفال.', en: 'Relatively safe site; preferred in infants and young children.' },
   },
   {
-    id: 'ventrogluteal', category: 'IM', anchor: [0.12, 0.85, -0.03],
+    id: 'ventrogluteal', category: 'IM', anchor: [0.13, 0.87, 0.06],
     names: { ar: 'الأرداف الأمامية (Ventrogluteal)', en: 'Ventrogluteal' },
     landmarks: { ar: 'راحة اليد على المدور الأكبر، السبابة على الشوكة الحرقفية الأمامية العلوية.', en: 'Palm on the greater trochanter, index finger on the anterior superior iliac spine.' },
     angle: { min: 80, max: 90 }, depthLevel: 'deep', zTrackApplicable: true,
@@ -636,7 +1077,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'يُعتبر من أكثر مواقع IM أمانًا؛ بعيد عن العصب الوركي.', en: 'Considered one of the safest IM sites; away from the sciatic nerve.' },
   },
   {
-    id: 'dorsogluteal', category: 'IM', anchor: [0.12, 0.8, -0.15],
+    id: 'dorsogluteal', category: 'IM', anchor: [0.13, 0.85, -0.08],
     names: { ar: 'الأرداف الخلفية (Dorsogluteal)', en: 'Dorsogluteal' },
     landmarks: { ar: 'الربع العلوي الوحشي فقط — لتجنب العصب الوركي.', en: 'Upper outer quadrant only — to avoid the sciatic nerve.' },
     angle: { min: 80, max: 90 }, depthLevel: 'deep', zTrackApplicable: true,
@@ -644,7 +1085,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: '⚠️ أعلى خطورة من ناحية العصب الوركي — أقل استخدامًا حاليًا لصالح Ventrogluteal.', en: '⚠️ Highest sciatic-nerve risk among IM sites — largely superseded by Ventrogluteal in current practice.' },
   },
   {
-    id: 'rectus_femoris', category: 'IM', anchor: [0.15, 0.55, 0.08],
+    id: 'rectus_femoris', category: 'IM', anchor: [0.10, 0.70, 0.09],
     names: { ar: 'مستقيمة الفخذ (Rectus Femoris)', en: 'Rectus Femoris' },
     landmarks: { ar: 'الثلث الأوسط من السطح الأمامي للفخذ.', en: 'Middle third of the anterior thigh.' },
     angle: { min: 72, max: 90 }, depthLevel: 'deep',
@@ -652,7 +1093,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'يُستخدم غالبًا عند تعذّر المواقع الأخرى.', en: 'Often used when other sites are unavailable.' },
   },
   {
-    id: 'abdomen_sc', category: 'SC', anchor: [0.1, 1.0, 0.13],
+    id: 'abdomen_sc', category: 'SC', anchor: [0.08, 1.00, 0.13],
     names: { ar: 'البطن (تحت الجلد)', en: 'Abdomen (SC)' },
     landmarks: { ar: 'على بعد 5 سم على الأقل من السرة، بالتناوب بين المواقع.', en: 'At least 5 cm from the umbilicus, rotating sites.' },
     angle: { min: 45, max: 90 }, depthLevel: 'medium',
@@ -660,7 +1101,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'الموقع الأسرع امتصاصًا للأنسولين مقارنة بمواقع أخرى.', en: 'Fastest insulin absorption compared to other SC sites.' },
   },
   {
-    id: 'upper_arm_sc', category: 'SC', anchor: [0.42, 1.45, -0.05],
+    id: 'upper_arm_sc', category: 'SC', anchor: [0.22, 1.275, -0.04],
     names: { ar: 'الذراع العلوية (تحت الجلد)', en: 'Upper Arm (SC)' },
     landmarks: { ar: 'السطح الخلفي الوحشي للذراع العلوية.', en: 'Posterolateral surface of the upper arm.' },
     angle: { min: 45, max: 90 }, depthLevel: 'medium',
@@ -668,7 +1109,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'تأكد من قرص طيّة جلدية كافية إذا كان المريض نحيفًا.', en: 'Ensure an adequate skin fold in thin patients.' },
   },
   {
-    id: 'thigh_sc', category: 'SC', anchor: [0.15, 0.55, 0.09],
+    id: 'thigh_sc', category: 'SC', anchor: [0.11, 0.72, 0.08],
     names: { ar: 'الفخذ (تحت الجلد)', en: 'Thigh (SC)' },
     landmarks: { ar: 'السطح الأمامي الوحشي للفخذ.', en: 'Anterolateral surface of the thigh.' },
     angle: { min: 45, max: 90 }, depthLevel: 'medium',
@@ -676,7 +1117,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'موقع شائع للحقن الذاتي (مثل الإنسولين).', en: 'Common self-injection site (e.g., insulin).' },
   },
   {
-    id: 'scapular_sc', category: 'SC', anchor: [0, 1.4, -0.12],
+    id: 'scapular_sc', category: 'SC', anchor: [0, 1.35, -0.10],
     names: { ar: 'منطقة لوح الكتف (تحت الجلد)', en: 'Scapular Region (SC)' },
     landmarks: { ar: 'الطية الجلدية أسفل زاوية لوح الكتف.', en: 'Skin fold below the scapular angle.' },
     angle: { min: 45, max: 90 }, depthLevel: 'medium',
@@ -684,7 +1125,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'أقل استخدامًا من مواقع البطن والذراع.', en: 'Less commonly used than abdomen/arm sites.' },
   },
   {
-    id: 'forearm_id', category: 'ID', anchor: [0.42, 1.0, 0.03],
+    id: 'forearm_id', category: 'ID', anchor: [0.23, 1.035, 0.05],
     names: { ar: 'الساعد الداخلي (داخل الأدمة)', en: 'Inner Forearm (ID)' },
     landmarks: { ar: 'السطح البطني للساعد، بعيدًا عن الشعر والأوردة الظاهرة.', en: 'Volar forearm surface, away from hair and visible veins.' },
     angle: { min: 5, max: 15 }, depthLevel: 'shallow',
@@ -692,7 +1133,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'الموقع القياسي لاختبارات الحساسية (مثل PPD).', en: 'Standard site for skin/allergy testing (e.g., PPD/Mantoux).' },
   },
   {
-    id: 'upper_chest_id', category: 'ID', anchor: [0.15, 1.35, 0.12],
+    id: 'upper_chest_id', category: 'ID', anchor: [0.10, 1.32, 0.12],
     names: { ar: 'أعلى الصدر (داخل الأدمة)', en: 'Upper Chest (ID)' },
     landmarks: { ar: 'أسفل الترقوة مباشرة.', en: 'Just below the clavicle.' },
     angle: { min: 5, max: 15 }, depthLevel: 'shallow',
@@ -700,7 +1141,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'بديل عند تعذّر الساعد.', en: 'Alternative when the forearm is unavailable.' },
   },
   {
-    id: 'median_cubital', category: 'IV', anchor: [0.42, 0.95, 0.05],
+    id: 'median_cubital', category: 'IV', anchor: [0.23, 1.13, 0.05],
     names: { ar: 'الوريد المرفقي المتوسط', en: 'Median Cubital Vein' },
     landmarks: { ar: 'منتصف الحفرة المرفقية الأمامية؛ أكبر وأكثر الأوردة ثباتًا.', en: 'Middle of the antecubital fossa; largest and most stable vein.' },
     angle: { min: 15, max: 30 }, depthLevel: 'medium',
@@ -708,7 +1149,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'الموقع المفضل الأول لسحب الدم والوصول الوريدي الروتيني.', en: 'First-choice site for routine blood draw and venous access.' },
   },
   {
-    id: 'cephalic', category: 'IV', anchor: [0.44, 0.9, 0.02],
+    id: 'cephalic', category: 'IV', anchor: [0.25, 0.98, 0.02],
     names: { ar: 'الوريد الرأسي (Cephalic)', en: 'Cephalic Vein' },
     landmarks: { ar: 'الجانب الكعبري (الإبهامي) من الساعد والذراع.', en: 'Radial (thumb) side of the forearm and arm.' },
     angle: { min: 15, max: 30 }, depthLevel: 'medium',
@@ -716,7 +1157,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'جيد للكانولات الأكبر حجمًا.', en: 'Good for larger-bore cannulas.' },
   },
   {
-    id: 'basilic', category: 'IV', anchor: [0.4, 0.9, -0.02],
+    id: 'basilic', category: 'IV', anchor: [0.19, 0.98, 0.02],
     names: { ar: 'الوريد القاعدي (Basilic)', en: 'Basilic Vein' },
     landmarks: { ar: 'الجانب الزندي (الخنصري) من الذراع.', en: 'Ulnar (little-finger) side of the arm.' },
     angle: { min: 15, max: 30 }, depthLevel: 'medium',
@@ -724,7 +1165,7 @@ const INJECTION_SITES = [
     dangerNote: { ar: 'أعمق وأقل ثباتًا من الأوردة الأخرى — غالبًا خيار لاحق.', en: 'Deeper and less stable than other veins — often a later choice.' },
   },
   {
-    id: 'dorsal_hand', category: 'IV', anchor: [0.42, 0.55, 0.05],
+    id: 'dorsal_hand', category: 'IV', anchor: [0.21, 0.82, -0.02],
     names: { ar: 'أوردة ظهر اليد', en: 'Dorsal Hand Veins' },
     landmarks: { ar: 'الشبكة الوريدية على ظهر اليد.', en: 'Venous network on the back of the hand.' },
     angle: { min: 10, max: 25 }, depthLevel: 'shallow',
@@ -1000,18 +1441,54 @@ class AnatomyEngine {
 
   _buildScene() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x0e1620);
-    this.scene.fog = new THREE.Fog(0x0e1620, 6, 16);
+    this.scene.background = this._gradientBackground();
+    this.scene.fog = new THREE.Fog(0x0b1220, 7, 17);
+  }
+
+  // A soft vertical gradient (navy → deep teal) instead of a flat color —
+  // cheap (one small canvas, generated once) but reads as a proper "studio"
+  // backdrop instead of a placeholder gray box.
+  _gradientBackground() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 8;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 256);
+    grad.addColorStop(0, '#182338');
+    grad.addColorStop(0.55, '#101a2b');
+    grad.addColorStop(1, '#0a1220');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 8, 256);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
   }
 
   _ground() {
-    const geo = new THREE.CircleGeometry(3, 32);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x141d29, roughness: 1, metalness: 0 });
+    const geo = new THREE.CircleGeometry(3, 48);
+    const tex = this._radialGroundTexture();
+    const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 1, metalness: 0 });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
     mesh.name = 'anatomy-ground';
     this.scene.add(mesh);
+  }
+
+  _radialGroundTexture() {
+    const size = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(size / 2, size / 2, size * 0.05, size / 2, size / 2, size / 2);
+    grad.addColorStop(0, '#1c2735');
+    grad.addColorStop(0.7, '#141d29');
+    grad.addColorStop(1, '#0c131c');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
   }
 
   _observeResize() {
@@ -1102,18 +1579,97 @@ class AnatomyEngine {
     this.modelRoot.add(root);
   }
 
-  // A low-poly procedural stand-in so the FULL pipeline (layers, raycast
-  // selection, camera focus, info panel) is demonstrably working before a
-  // licensed anatomical model is available. Clearly named per the layer
-  // system's conventions so swapping in a real GLB later needs no code change.
-  buildPlaceholderBody() {
+  // ---- procedural placeholder body (segmented, gender-aware) -------------
+  //
+  // HONESTY NOTE: this is still a procedural stand-in, not a scanned or
+  // licensed anatomical model — but it is a properly-proportioned, jointed
+  // humanoid (tapered torso via a lathed profile, upper-arm/forearm/hand and
+  // thigh/shin/foot segments) instead of plain capsules, so it reads as a
+  // human figure rather than a mannequin. A truly "real" high-fidelity human
+  // mesh still requires a licensed GLB asset — see /README section in the
+  // model loader below for how to plug one in with zero code changes.
+
+  _bodyProportions(gender) {
+    const f = gender === 'female';
+    return {
+      shoulder: { x: f ? 0.17 : 0.20, y: f ? 1.36 : 1.40 },
+      elbow: { x: f ? 0.20 : 0.24, y: 1.15 },
+      wrist: { x: f ? 0.185 : 0.22, y: 0.92 },
+      handEnd: { x: f ? 0.175 : 0.21, y: 0.80 },
+      hip: { x: f ? 0.115 : 0.10, y: 0.90 },
+      knee: { x: f ? 0.10 : 0.105, y: 0.50 },
+      ankle: { x: f ? 0.075 : 0.09, y: 0.09 },
+      footEnd: { x: f ? 0.075 : 0.09, y: 0.03, z: 0.12 },
+      neckY: f ? 1.44 : 1.47,
+      headY: f ? 1.57 : 1.60,
+      headRadius: f ? 0.092 : 0.10,
+      rArmUpper: f ? 0.042 : 0.052,
+      rArmLower: f ? 0.033 : 0.040,
+      rHand: f ? 0.028 : 0.033,
+      rThigh: f ? 0.085 : 0.095,
+      rShin: f ? 0.058 : 0.066,
+      rFoot: f ? 0.042 : 0.048,
+      // Lathe torso profile: [radius, y] from pelvis floor to shoulder base.
+      torsoProfile: f
+        ? [[0.085, 0.86], [0.185, 0.94], [0.16, 1.00], [0.125, 1.07], [0.115, 1.15], [0.14, 1.26], [0.155, 1.34], [0.15, 1.39]]
+        : [[0.09, 0.86], [0.125, 0.93], [0.12, 0.99], [0.125, 1.06], [0.135, 1.15], [0.165, 1.27], [0.19, 1.37], [0.175, 1.41]],
+    };
+  }
+
+  _capsuleBetween(a, b, radius, mat, name) {
+    const start = new THREE.Vector3(...a);
+    const end = new THREE.Vector3(...b);
+    const dir = new THREE.Vector3().subVectors(end, start);
+    const length = Math.max(dir.length() - radius * 1.4, 0.01);
+    const geo = new THREE.CapsuleGeometry(radius, length, 4, 10);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.addVectors(start, end).multiplyScalar(0.5);
+    const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+    mesh.quaternion.copy(quat);
+    mesh.name = name;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  }
+
+  // Removes and disposes the current placeholder (if any) so gender can be
+  // switched cleanly without leaking GPU memory.
+  _disposePlaceholder() {
+    if (!this._placeholderGroup) return;
+    this._placeholderGroup.traverse((obj) => {
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((m) => m.dispose());
+      }
+    });
+    this.modelRoot.remove(this._placeholderGroup);
+    this._placeholderGroup = null;
+  }
+
+  setGender(gender) {
+    this._disposePlaceholder();
+    return this.buildPlaceholderBody(gender);
+  }
+
+  // A jointed, properly-proportioned procedural stand-in so the FULL pipeline
+  // (layers, raycast selection, camera focus, info panel, injection sites) is
+  // demonstrably working before a licensed anatomical model is available.
+  // Named per the layer system's conventions so swapping in a real GLB later
+  // needs no code change.
+  buildPlaceholderBody(gender = 'male') {
+    this._disposePlaceholder();
+    this.gender = gender;
+    const P = this._bodyProportions(gender);
     const group = new THREE.Group();
     group.name = 'placeholder-body';
 
-    const skinMat = new THREE.MeshStandardMaterial({ color: 0xe8b48c, roughness: 0.7 });
+    const isFemale = gender === 'female';
+    const skinMat = new THREE.MeshStandardMaterial({ color: isFemale ? 0xe9bb9a : 0xdfab84, roughness: 0.65, metalness: 0.02 });
     const muscleMat = new THREE.MeshStandardMaterial({ color: 0xb23b3b, roughness: 0.6 });
     const boneMat = new THREE.MeshStandardMaterial({ color: 0xf2eee0, roughness: 0.5 });
     const organMat = new THREE.MeshStandardMaterial({ color: 0x9c3b52, roughness: 0.4 });
+    const hairMat = new THREE.MeshStandardMaterial({ color: 0x2b2018, roughness: 0.8 });
 
     const add = (mesh, name, layer, partId) => {
       mesh.name = name;
@@ -1125,67 +1681,410 @@ class AnatomyEngine {
       return mesh;
     };
 
-    // Skin layer — simple humanoid silhouette (capsules).
-    const skin = new THREE.Group();
-    skin.name = 'skin_layer';
-    add(new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 0.55, 4, 12), skinMat), 'skin_torso', 'skin').position.set(0, 1.15, 0);
-    add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), skinMat), 'skin_head', 'skin').position.set(0, 1.78, 0);
-    add(new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.5, 4, 8), skinMat), 'skin_arm_l', 'skin').position.set(-0.42, 1.15, 0);
-    add(new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.5, 4, 8), skinMat), 'skin_arm_r', 'skin').position.set(0.42, 1.15, 0);
-    add(new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.65, 4, 8), skinMat), 'skin_leg_l', 'skin').position.set(-0.15, 0.45, 0);
-    add(new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.65, 4, 8), skinMat), 'skin_leg_r', 'skin').position.set(0.15, 0.45, 0);
-    group.add(skin);
+    // ---- SKIN layer: tapered torso + jointed limbs + head -----------------
+    const torsoGeo = new THREE.LatheGeometry(P.torsoProfile.map(([r, y]) => new THREE.Vector2(r, y)), 28);
+    add(new THREE.Mesh(torsoGeo, skinMat), 'skin_torso', 'skin');
 
-    // Muscle layer (slightly smaller, hidden by default).
-    const muscles = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 0.5, 4, 12), muscleMat);
-    add(muscles, 'muscle_torso', 'muscles').position.set(0, 1.15, 0);
-    muscles.visible = false;
+    add(this._capsuleBetween([0, P.torsoProfile[P.torsoProfile.length - 1][1], 0], [0, P.neckY, 0], 0.045, skinMat, 'skin_neck'), 'skin_neck', 'skin');
+    const head = new THREE.Mesh(new THREE.SphereGeometry(P.headRadius, 20, 20), skinMat);
+    head.scale.set(0.92, 1.08, 0.96);
+    add(head, 'skin_head', 'skin').position.set(0, P.headY, 0);
 
-    // Skeleton layer (spine placeholder).
-    const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.0, 8), boneMat);
-    add(spine, 'skeleton_spine', 'skeleton').position.set(0, 1.15, -0.05);
-    spine.visible = false;
+    if (isFemale) {
+      // Simple rounded "hair volume" at the back/sides of the head — a
+      // subtle, non-stereotyping cue rather than a detailed hair sculpt.
+      const hair = new THREE.Mesh(new THREE.SphereGeometry(P.headRadius * 1.08, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.62), hairMat);
+      hair.rotation.x = Math.PI;
+      hair.position.set(0, P.headY + P.headRadius * 0.28, -P.headRadius * 0.12);
+      add(hair, 'skin_hair', 'skin');
+    }
 
-    // Organs — approximate anatomical positions inside the torso.
-    const heart = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), organMat);
-    add(heart, 'organ_heart', 'organs', 'heart').position.set(-0.05, 1.35, 0.12);
-    heart.visible = false;
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+      const sx = side * P.shoulder.x, ex = side * P.elbow.x, wx = side * P.wrist.x, hx = side * P.handEnd.x;
+      add(this._capsuleBetween([sx, P.shoulder.y, 0], [ex, P.elbow.y, 0], P.rArmUpper, skinMat, `skin_arm_upper_${tag}`), `skin_arm_upper_${tag}`, 'skin');
+      add(this._capsuleBetween([ex, P.elbow.y, 0], [wx, P.wrist.y, 0], P.rArmLower, skinMat, `skin_arm_lower_${tag}`), `skin_arm_lower_${tag}`, 'skin');
+      const hand = new THREE.Mesh(new THREE.CapsuleGeometry(P.rHand, 0.06, 4, 8), skinMat);
+      hand.position.set(hx, P.handEnd.y, 0);
+      add(hand, `skin_hand_${tag}`, 'skin');
 
-    const lungL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), organMat);
-    add(lungL, 'organ_lung_l', 'organs', 'lungs').position.set(-0.14, 1.35, 0.05);
-    lungL.visible = false;
-    const lungR = lungL.clone();
-    add(lungR, 'organ_lung_r', 'organs', 'lungs').position.set(0.14, 1.35, 0.05);
-    lungR.visible = false;
+      const kx = side * P.knee.x, ax = side * P.ankle.x;
+      add(this._capsuleBetween([side * P.hip.x, P.hip.y, 0], [kx, P.knee.y, 0], P.rThigh, skinMat, `skin_leg_thigh_${tag}`), `skin_leg_thigh_${tag}`, 'skin');
+      add(this._capsuleBetween([kx, P.knee.y, 0], [ax, P.ankle.y, 0], P.rShin, skinMat, `skin_leg_shin_${tag}`), `skin_leg_shin_${tag}`, 'skin');
+      const foot = new THREE.Mesh(new THREE.CapsuleGeometry(P.rFoot, 0.09, 4, 8), skinMat);
+      foot.rotation.z = Math.PI / 2;
+      foot.position.set(side * P.footEnd.x, P.footEnd.y, P.footEnd.z * 0.5);
+      add(foot, `skin_foot_${tag}`, 'skin');
+    });
 
-    const liver = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), organMat);
-    add(liver, 'organ_liver', 'organs', 'liver').position.set(0.1, 1.05, 0.1);
-    liver.visible = false;
+    // ---- MUSCLE layer: major muscle groups (segmented, toggleable) --------
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
 
-    const stomach = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), organMat);
-    add(stomach, 'organ_stomach', 'organs', 'stomach').position.set(-0.08, 1.02, 0.1);
+      const pec = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), muscleMat);
+      pec.scale.set(1, 0.55, 0.5);
+      pec.position.set(side * 0.075, 1.28, 0.075);
+      pec.visible = false;
+      add(pec, `muscle_chest_${tag}`, 'muscles', 'chest_muscles');
+
+      const delt = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 10), muscleMat);
+      delt.position.set(side * P.shoulder.x, P.shoulder.y - 0.02, 0);
+      delt.visible = false;
+      add(delt, `muscle_deltoid_${tag}`, 'muscles', 'shoulder_muscles');
+
+      const armM = this._capsuleBetween([side * P.shoulder.x, P.shoulder.y - 0.03, 0.015], [side * P.elbow.x, P.elbow.y + 0.02, 0.015], isFemale ? 0.036 : 0.044, muscleMat, `muscle_arm_${tag}`);
+      armM.visible = false;
+      add(armM, `muscle_arm_${tag}`, 'muscles', 'arm_muscles');
+
+      const glute = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10), muscleMat);
+      glute.scale.set(1, 0.85, 0.65);
+      glute.position.set(side * 0.075, P.hip.y - 0.02, -0.07);
+      glute.visible = false;
+      add(glute, `muscle_glute_${tag}`, 'muscles', 'gluteal_muscles');
+
+      const thighM = this._capsuleBetween([side * P.hip.x, P.hip.y - 0.02, 0.015], [side * P.knee.x, P.knee.y + 0.02, 0.015], isFemale ? 0.075 : 0.084, muscleMat, `muscle_thigh_${tag}`);
+      thighM.visible = false;
+      add(thighM, `muscle_thigh_${tag}`, 'muscles', 'thigh_muscles');
+    });
+
+    const abs = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.22, 0.05), muscleMat);
+    abs.position.set(0, 1.02, 0.09);
+    abs.visible = false;
+    add(abs, 'muscle_abs', 'muscles', 'abdominal_muscles');
+
+    // Trapezius / Latissimus dorsi — upper-to-mid back coverage.
+    const trapezius = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), muscleMat);
+    trapezius.scale.set(1.3, 0.7, 0.55);
+    trapezius.position.set(0, 1.36, -0.06);
+    trapezius.visible = false;
+    add(trapezius, 'muscle_trapezius', 'muscles', 'back_muscles');
+
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+      const lat = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10), muscleMat);
+      lat.scale.set(0.75, 1.15, 0.55);
+      lat.position.set(side * 0.115, 1.16, -0.06);
+      lat.visible = false;
+      add(lat, `muscle_lat_${tag}`, 'muscles', 'back_muscles');
+
+      // Obliques — sides of the abdominal wall.
+      const obl = new THREE.Mesh(new THREE.CapsuleGeometry(0.035, 0.12, 4, 8), muscleMat);
+      obl.position.set(side * 0.105, 1.01, 0.03);
+      obl.visible = false;
+      add(obl, `muscle_oblique_${tag}`, 'muscles', 'oblique_muscles');
+
+      // Forearm flexor mass overlay.
+      const forearmM = this._capsuleBetween([side * P.elbow.x, P.elbow.y - 0.02, 0.012], [side * P.wrist.x, P.wrist.y + 0.02, 0.012], isFemale ? 0.028 : 0.034, muscleMat, `muscle_forearm_${tag}`);
+      forearmM.visible = false;
+      add(forearmM, `muscle_forearm_${tag}`, 'muscles', 'forearm_muscles');
+
+      // Calf (gastrocnemius) overlay on the shin.
+      const calfM = this._capsuleBetween([side * P.knee.x, P.knee.y - 0.02, 0.01], [side * P.ankle.x, P.ankle.y + 0.05, 0.01], isFemale ? 0.05 : 0.058, muscleMat, `muscle_calf_${tag}`);
+      calfM.visible = false;
+      add(calfM, `muscle_calf_${tag}`, 'muscles', 'calf_muscles');
+    });
+
+    // ---- SKELETON layer: segmented, anatomically arranged, hidden by default -
+    const skull = new THREE.Mesh(new THREE.SphereGeometry(P.headRadius * 0.86, 16, 16), boneMat);
+    skull.scale.set(0.9, 1.05, 0.94);
+    skull.position.set(0, P.headY, 0);
+    skull.visible = false;
+    add(skull, 'skeleton_skull', 'skeleton', 'skull');
+
+    const vertCount = 10;
+    for (let i = 0; i < vertCount; i++) {
+      const t = i / (vertCount - 1);
+      const y = (P.hip.y + 0.02) + t * (P.neckY - (P.hip.y + 0.02));
+      const vert = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.032, 0.035, 8), boneMat);
+      vert.position.set(0, y, -0.075);
+      vert.visible = false;
+      add(vert, `skeleton_vertebra_${i}`, 'skeleton', 'vertebral_column');
+    }
+
+    for (let i = 0; i < 6; i++) {
+      const y = 1.10 + i * 0.045;
+      const rib = new THREE.Mesh(new THREE.TorusGeometry(0.135 - i * 0.003, 0.009, 6, 20, Math.PI * 1.15), boneMat);
+      rib.rotation.set(Math.PI / 2, 0, Math.PI / 2 - 0.15);
+      rib.position.set(0, y, -0.01);
+      rib.visible = false;
+      add(rib, `skeleton_rib_${i}`, 'skeleton', 'ribcage');
+    }
+
+    const pelvisBone = new THREE.Mesh(new THREE.SphereGeometry(0.115, 14, 10), boneMat);
+    pelvisBone.scale.set(1, 0.55, 0.75);
+    pelvisBone.position.set(0, P.hip.y, -0.01);
+    pelvisBone.visible = false;
+    add(pelvisBone, 'skeleton_pelvis', 'skeleton', 'pelvis_bone');
+
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+
+      // Clavicle (collarbone) — thin strut from sternum to shoulder.
+      const clavicle = this._capsuleBetween([side * 0.02, 1.40, 0.03], [side * P.shoulder.x, P.shoulder.y - 0.01, 0.01], 0.014, boneMat, `skeleton_clavicle_${tag}`);
+      clavicle.visible = false;
+      add(clavicle, `skeleton_clavicle_${tag}`, 'skeleton', 'clavicle_scapula');
+
+      // Scapula (shoulder blade) — flattened plate on the upper back.
+      const scapula = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.09, 0.012), boneMat);
+      scapula.position.set(side * 0.10, 1.34, -0.075);
+      scapula.rotation.y = side * 0.25;
+      scapula.visible = false;
+      add(scapula, `skeleton_scapula_${tag}`, 'skeleton', 'clavicle_scapula');
+
+      // Humerus (upper arm bone) + radius/ulna (forearm bones) as two segments.
+      const humerus = this._capsuleBetween([side * P.shoulder.x, P.shoulder.y, 0], [side * P.elbow.x, P.elbow.y, 0], 0.019, boneMat, `skeleton_humerus_${tag}`);
+      humerus.visible = false;
+      add(humerus, `skeleton_humerus_${tag}`, 'skeleton', 'arm_bones');
+
+      const radiusUlna = this._capsuleBetween([side * P.elbow.x, P.elbow.y, 0], [side * P.wrist.x, P.wrist.y, 0], 0.015, boneMat, `skeleton_radiusulna_${tag}`);
+      radiusUlna.visible = false;
+      add(radiusUlna, `skeleton_radiusulna_${tag}`, 'skeleton', 'arm_bones');
+
+      // Simplified hand skeleton — wrist block + five short finger capsules.
+      const wristBlock = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.02, 0.045), boneMat);
+      wristBlock.position.set(side * P.wrist.x, P.wrist.y - 0.015, 0);
+      wristBlock.visible = false;
+      add(wristBlock, `skeleton_wrist_${tag}`, 'skeleton', 'hand_bones');
+      for (let fi = 0; fi < 5; fi++) {
+        const fx = side * (P.handEnd.x - 0.012 + fi * 0.006);
+        const finger = this._capsuleBetween([fx, P.wrist.y - 0.03, 0], [fx, P.handEnd.y - 0.05, 0], 0.006, boneMat, `skeleton_finger_${tag}_${fi}`);
+        finger.visible = false;
+        add(finger, `skeleton_finger_${tag}_${fi}`, 'skeleton', 'hand_bones');
+      }
+
+      // Femur (thigh bone) + tibia/fibula (shin bones) as two segments.
+      const femur = this._capsuleBetween([side * P.hip.x, P.hip.y, 0], [side * P.knee.x, P.knee.y, 0], 0.026, boneMat, `skeleton_femur_${tag}`);
+      femur.visible = false;
+      add(femur, `skeleton_femur_${tag}`, 'skeleton', 'leg_bones');
+
+      const tibiaFibula = this._capsuleBetween([side * P.knee.x, P.knee.y, 0], [side * P.ankle.x, P.ankle.y, 0], 0.020, boneMat, `skeleton_tibiafibula_${tag}`);
+      tibiaFibula.visible = false;
+      add(tibiaFibula, `skeleton_tibiafibula_${tag}`, 'skeleton', 'leg_bones');
+
+      // Simplified foot skeleton — tarsal block + toe nubs.
+      const tarsalBlock = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.024, 0.06), boneMat);
+      tarsalBlock.position.set(side * P.footEnd.x, P.footEnd.y + 0.005, P.footEnd.z * 0.35);
+      tarsalBlock.visible = false;
+      add(tarsalBlock, `skeleton_tarsal_${tag}`, 'skeleton', 'foot_bones');
+      for (let ti = 0; ti < 5; ti++) {
+        const toe = new THREE.Mesh(new THREE.CapsuleGeometry(0.007, 0.02, 4, 6), boneMat);
+        toe.rotation.z = Math.PI / 2;
+        toe.position.set(side * (P.footEnd.x - 0.016 + ti * 0.008), P.footEnd.y, P.footEnd.z * 0.9);
+        toe.visible = false;
+        add(toe, `skeleton_toe_${tag}_${ti}`, 'skeleton', 'foot_bones');
+      }
+    });
+
+    // ---- ORGANS: dedicated non-spherical shapes for major organs ----------
+    // Heart — offset double-lobe (ventricles) + apex cone, tilted like a real heart.
+    const heartBody = new THREE.Mesh(new THREE.SphereGeometry(0.052, 14, 12), organMat);
+    heartBody.scale.set(1, 1.15, 0.85);
+    heartBody.position.set(-0.045, 1.28, 0.10);
+    heartBody.rotation.z = -0.18;
+    heartBody.visible = false;
+    add(heartBody, 'organ_heart_body', 'organs', 'heart');
+
+    const heartApex = new THREE.Mesh(new THREE.ConeGeometry(0.032, 0.05, 12), organMat);
+    heartApex.position.set(-0.055, 1.225, 0.10);
+    heartApex.rotation.z = Math.PI - 0.18;
+    heartApex.visible = false;
+    add(heartApex, 'organ_heart_apex', 'organs', 'heart');
+
+    // Lungs — elongated, tapered lobes (conical base + rounded top).
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+      const lungTop = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 12, 0, Math.PI * 2, 0, Math.PI * 0.65), organMat);
+      lungTop.scale.set(0.85, 1.3, 1);
+      lungTop.position.set(side * 0.115, 1.32, 0.02);
+      lungTop.visible = false;
+      add(lungTop, `organ_lung_top_${tag}`, 'organs', 'lungs');
+
+      const lungBase = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.14, 14), organMat);
+      lungBase.scale.set(0.85, 1, 1);
+      lungBase.position.set(side * 0.115, 1.18, 0.02);
+      lungBase.visible = false;
+      add(lungBase, `organ_lung_base_${tag}`, 'organs', 'lungs');
+    });
+
+    // Liver — asymmetric wedge (large right lobe + smaller left lobe).
+    const liverMain = new THREE.Mesh(new THREE.SphereGeometry(0.095, 14, 10), organMat);
+    liverMain.scale.set(1.15, 0.55, 0.85);
+    liverMain.position.set(0.075, 1.06, 0.09);
+    liverMain.visible = false;
+    add(liverMain, 'organ_liver_main', 'organs', 'liver');
+    const liverLobe = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), organMat);
+    liverLobe.scale.set(1, 0.6, 0.8);
+    liverLobe.position.set(-0.03, 1.045, 0.10);
+    liverLobe.visible = false;
+    add(liverLobe, 'organ_liver_lobe', 'organs', 'liver');
+
+    // Stomach — bent J-shape via a partial torus arc.
+    const stomach = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.032, 10, 16, Math.PI * 1.3), organMat);
+    stomach.rotation.set(0, 0, 2.4);
+    stomach.position.set(-0.06, 1.05, 0.09);
     stomach.visible = false;
+    add(stomach, 'organ_stomach', 'organs', 'stomach');
 
-    const kidneyL = new THREE.Mesh(new THREE.CapsuleGeometry(0.03, 0.06, 4, 8), organMat);
-    add(kidneyL, 'organ_kidney_l', 'organs', 'kidneys').position.set(-0.12, 0.95, -0.05);
-    kidneyL.visible = false;
-    const kidneyR = kidneyL.clone();
-    add(kidneyR, 'organ_kidney_r', 'organs', 'kidneys').position.set(0.12, 0.95, -0.05);
-    kidneyR.visible = false;
+    // Kidneys — bean shape via a tapered, flattened capsule.
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+      const kidney = new THREE.Mesh(new THREE.CapsuleGeometry(0.028, 0.05, 4, 10), organMat);
+      kidney.scale.set(0.7, 1, 1.3);
+      kidney.rotation.z = Math.PI / 2;
+      kidney.position.set(side * 0.10, 0.98, -0.06);
+      kidney.visible = false;
+      add(kidney, `organ_kidney_${tag}`, 'organs', 'kidneys');
 
-    const brain = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), organMat);
-    add(brain, 'organ_brain', 'organs', 'brain').position.set(0, 1.82, 0);
-    brain.visible = false;
+      // Adrenal gland — tiny cap perched on top of each kidney.
+      const adrenal = new THREE.Mesh(new THREE.SphereGeometry(0.014, 8, 8), organMat);
+      adrenal.scale.set(1.3, 0.7, 1);
+      adrenal.position.set(side * 0.095, 1.015, -0.055);
+      adrenal.visible = false;
+      add(adrenal, `organ_adrenal_${tag}`, 'organs', 'adrenal_glands');
+    });
 
-    // Region anchors (invisible helpers used by the Region Navigator's camera focus).
+    const organs = [
+      ['organ_brain', 'brain', [0, P.headY, 0], 0.075],
+      ['organ_pancreas', 'pancreas', [-0.02, 1.00, 0.02], 0.035],
+      ['organ_spleen', 'spleen', [-0.13, 1.07, -0.01], 0.04],
+      ['organ_gallbladder', 'gallbladder', [0.12, 0.995, 0.10], 0.022],
+      ['organ_bladder', 'bladder', [0, 0.82, 0.07], 0.05],
+      ['organ_thyroid', 'thyroid', [0, 1.415, 0.045], 0.022],
+      ['organ_diaphragm', 'diaphragm', [0, 1.155, 0], 0.13],
+    ];
+    organs.forEach(([name, partId, pos, r]) => {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 14), organMat);
+      m.position.set(...pos);
+      m.visible = false;
+      add(m, name, 'organs', partId);
+    });
+
+    // Appendix — thin tapered cylinder hanging off the large intestine.
+    const appendix = new THREE.Mesh(new THREE.ConeGeometry(0.009, 0.05, 8), organMat);
+    appendix.rotation.x = Math.PI / 2;
+    appendix.position.set(0.09, 0.885, 0.05);
+    appendix.visible = false;
+    add(appendix, 'organ_appendix', 'organs', 'appendix');
+
+    const trachea = new THREE.Mesh(new THREE.CylinderGeometry(0.017, 0.017, 0.16, 10), organMat);
+    trachea.position.set(0, 1.36, 0.05);
+    trachea.visible = false;
+    add(trachea, 'organ_trachea', 'organs', 'trachea');
+
+    const esophagus = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.22, 8), organMat);
+    esophagus.position.set(0, 1.32, -0.01);
+    esophagus.visible = false;
+    add(esophagus, 'organ_esophagus', 'organs', 'esophagus');
+
+    const smallIntestine = new THREE.Mesh(new THREE.TorusKnotGeometry(0.055, 0.018, 64, 8, 2, 3), organMat);
+    smallIntestine.scale.set(1, 0.55, 1);
+    smallIntestine.position.set(0, 0.93, 0.06);
+    smallIntestine.visible = false;
+    add(smallIntestine, 'organ_small_intestine', 'organs', 'small_intestine');
+
+    const largeIntestine = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.018, 8, 24), organMat);
+    largeIntestine.rotation.x = Math.PI / 2;
+    largeIntestine.position.set(0, 0.95, 0.04);
+    largeIntestine.visible = false;
+    add(largeIntestine, 'organ_large_intestine', 'organs', 'large_intestine');
+
+    const spinalCordMat = new THREE.MeshStandardMaterial({ color: 0xf5e6a8, roughness: 0.5 });
+    const spinalCord = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.011, P.neckY - P.hip.y, 8), spinalCordMat);
+    spinalCord.position.set(0, (P.neckY + P.hip.y) / 2, -0.075);
+    spinalCord.visible = false;
+    add(spinalCord, 'organ_spinal_cord', 'nerves', 'spinal_cord');
+
+    // ---- VESSELS layer: major arteries/veins as curved tubes --------------
+    const arteryMat = new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.4 });
+    const veinMat = new THREE.MeshStandardMaterial({ color: 0x2e5fa3, roughness: 0.4 });
+    const nerveMat = spinalCordMat;
+
+    const aortaCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-0.02, 1.30, 0.08),
+      new THREE.Vector3(0.01, 1.22, 0.0),
+      new THREE.Vector3(0, 1.05, -0.06),
+      new THREE.Vector3(0, 0.90, -0.05),
+    ]);
+    const aorta = new THREE.Mesh(new THREE.TubeGeometry(aortaCurve, 24, 0.014, 8, false), arteryMat);
+    aorta.visible = false;
+    add(aorta, 'vessel_aorta', 'vessels', 'aorta');
+
+    const venaCavaCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.025, 1.30, 0.06),
+      new THREE.Vector3(0.02, 1.15, -0.03),
+      new THREE.Vector3(0.015, 0.95, -0.04),
+      new THREE.Vector3(0.015, 0.85, -0.04),
+    ]);
+    const venaCava = new THREE.Mesh(new THREE.TubeGeometry(venaCavaCurve, 24, 0.013, 8, false), veinMat);
+    venaCava.visible = false;
+    add(venaCava, 'vessel_venacava', 'vessels', 'vena_cava');
+
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+      const carotid = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.008, 0.20, 8), arteryMat);
+      carotid.position.set(side * 0.025, 1.40, 0.03);
+      carotid.visible = false;
+      add(carotid, `vessel_carotid_${tag}`, 'vessels', 'carotid_artery');
+
+      const femoral = this._capsuleBetween([side * (P.hip.x + 0.01), P.hip.y - 0.02, 0.02], [side * (P.knee.x + 0.005), P.knee.y + 0.05, 0.015], 0.009, arteryMat, `vessel_femoral_${tag}`);
+      femoral.visible = false;
+      add(femoral, `vessel_femoral_${tag}`, 'vessels', 'femoral_artery');
+
+      // Brachial plexus — small nerve bundle in the armpit region.
+      const plexus = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), nerveMat);
+      plexus.scale.set(1, 1.6, 0.8);
+      plexus.position.set(side * (P.shoulder.x - 0.01), P.shoulder.y - 0.06, 0.01);
+      plexus.visible = false;
+      add(plexus, `nerve_brachial_plexus_${tag}`, 'nerves', 'brachial_plexus');
+
+      // Sciatic nerve — thick nerve down the back of the thigh.
+      const sciatic = this._capsuleBetween([side * (P.hip.x + 0.01), P.hip.y - 0.03, -0.03], [side * (P.knee.x + 0.005), P.knee.y + 0.02, -0.02], 0.011, nerveMat, `nerve_sciatic_${tag}`);
+      sciatic.visible = false;
+      add(sciatic, `nerve_sciatic_${tag}`, 'nerves', 'sciatic_nerve');
+    });
+
+    const vagus = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.24, 6), nerveMat);
+    vagus.position.set(0.012, 1.32, 0.02);
+    vagus.visible = false;
+    add(vagus, 'nerve_vagus', 'nerves', 'vagus_nerve');
+
+    // ---- Reproductive organs (gender-specific) -----------------------------
+    if (isFemale) {
+      const uterus = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), organMat);
+      uterus.scale.set(1, 0.85, 0.9);
+      uterus.position.set(0, 0.835, 0.06);
+      uterus.visible = false;
+      add(uterus, 'organ_uterus', 'organs', 'uterus');
+
+      [-1, 1].forEach((side) => {
+        const ov = new THREE.Mesh(new THREE.SphereGeometry(0.016, 10, 10), organMat);
+        ov.position.set(side * 0.045, 0.835, 0.055);
+        ov.visible = false;
+        add(ov, `organ_ovary_${side < 0 ? 'l' : 'r'}`, 'organs', 'ovaries');
+      });
+    } else {
+      const prostate = new THREE.Mesh(new THREE.SphereGeometry(0.025, 10, 10), organMat);
+      prostate.position.set(0, 0.815, 0.06);
+      prostate.visible = false;
+      add(prostate, 'organ_prostate', 'organs', 'prostate');
+
+      [-1, 1].forEach((side) => {
+        const testis = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 10), organMat);
+        testis.position.set(side * 0.022, 0.775, 0.06);
+        testis.visible = false;
+        add(testis, `organ_testis_${side < 0 ? 'l' : 'r'}`, 'organs', 'testes');
+      });
+    }
+
+    // ---- Region anchors (invisible helpers for the Region Navigator) ------
     const regionAnchors = {
-      region_head: [0, 1.78, 0],
-      region_thorax: [0, 1.35, 0],
+      region_head: [0, P.headY, 0],
+      region_thorax: [0, 1.25, 0],
       region_abdomen: [0, 1.0, 0],
-      region_pelvis: [0, 0.8, 0],
-      region_arm_r: [0.42, 1.15, 0],
-      region_leg_r: [0.15, 0.45, 0],
-      region_spine: [0, 1.15, -0.1],
+      region_pelvis: [0, P.hip.y, 0],
+      region_arm_r: [P.elbow.x, P.elbow.y, 0],
+      region_leg_r: [P.knee.x, P.knee.y, 0],
+      region_spine: [0, 1.15, -0.08],
     };
     Object.entries(regionAnchors).forEach(([name, pos]) => {
       const anchor = new THREE.Object3D();
@@ -1617,6 +2516,9 @@ class AnatomySystem {
     this.injectionSystem = null;
     this.selector = null;
     this.mode = 'explore'; // 'explore' | 'injection'
+    this.gender = 'male'; // 'male' | 'female' — only meaningful while on the placeholder body
+    this.usingRealModel = false;
+    this._outlineMesh = null;
     this.lang = (window.currentLang === 'ar') ? 'ar' : 'en';
   }
 
@@ -1724,6 +2626,7 @@ class AnatomySystem {
           `${anatomyT('loading', this.lang)} ${Math.round(p * 100)}%`;
       },
     });
+    this.usingRealModel = !placeholder;
 
     this.layerSystem = new LayerSystem(this.engine.modelRoot);
     this.layerSystem.refresh();
@@ -1739,15 +2642,22 @@ class AnatomySystem {
       noticeEl.remove();
     }
 
+    if (!this.usingRealModel) {
+      const genderRow = this.container.querySelector('.anatomy-gender-switch');
+      if (genderRow) genderRow.style.display = 'flex';
+    }
+
     this._wireLayerButtons();
     this._wireViewButtons();
     this._wireModeButtons();
     this._wireSearch();
     this._wireInjectionUI();
     this._wireInjectionPicking();
+    this._wireGenderButtons();
+    this._wireAutoRotate();
 
-    anatomyBus.on('select', (payload) => { if (this.mode === 'explore') this._select(payload.partId); });
-    anatomyBus.on('select-none', () => { if (this.mode === 'explore') this.labelSystem.renderEmpty(); });
+    anatomyBus.on('select', (payload) => { if (this.mode === 'explore') { this._select(payload.partId); this._applyHighlight(payload.object3D); } });
+    anatomyBus.on('select-none', () => { if (this.mode === 'explore') { this.labelSystem.renderEmpty(); this._clearHighlight(); } });
 
     this.engine.start((fps) => this._updateFps(fps, fpsEl));
   }
@@ -1755,6 +2665,30 @@ class AnatomySystem {
   _select(partId) {
     this.labelSystem.renderPart(partId);
     anatomyBus.emit('part-selected', { partId });
+  }
+
+  // Cheap "inverted hull" outline: a slightly scaled, back-face-only clone of
+  // the selected mesh, so the trainee gets clear visual confirmation of what
+  // they tapped without any post-processing pass.
+  _applyHighlight(object3D) {
+    this._clearHighlight();
+    if (!object3D || !object3D.geometry) return;
+    const outline = new THREE.Mesh(
+      object3D.geometry,
+      new THREE.MeshBasicMaterial({ color: 0x60a5fa, side: THREE.BackSide, transparent: true, opacity: 0.9 })
+    );
+    outline.scale.copy(object3D.scale).multiplyScalar(1.06);
+    outline.position.copy(object3D.position);
+    outline.quaternion.copy(object3D.quaternion);
+    object3D.parent.add(outline);
+    this._outlineMesh = outline;
+  }
+
+  _clearHighlight() {
+    if (this._outlineMesh) {
+      this._outlineMesh.parent && this._outlineMesh.parent.remove(this._outlineMesh);
+      this._outlineMesh = null;
+    }
   }
 
   _updateFps(fps, fpsEl) {
@@ -1785,6 +2719,10 @@ class AnatomySystem {
             <button class="anatomy-mode-btn active" data-mode="explore">🔎 ${isAr ? 'استكشاف' : 'Explore'}</button>
             <button class="anatomy-mode-btn" data-mode="injection">💉 ${isAr ? 'محاكي الحقن' : 'Injection Master'}</button>
           </div>
+          <div class="anatomy-gender-switch" style="display:none;">
+            <button class="anatomy-gender-btn active" data-gender="male">♂ ${isAr ? 'ذكر' : 'Male'}</button>
+            <button class="anatomy-gender-btn" data-gender="female">♀ ${isAr ? 'أنثى' : 'Female'}</button>
+          </div>
           <input type="text" class="anatomy-search" placeholder="${t('searchPlaceholder')}">
         </div>
         <div class="anatomy-body">
@@ -1800,6 +2738,7 @@ class AnatomySystem {
               <button data-view="back">${t('view_back')}</button>
               <button data-view="left">${t('view_left')}</button>
               <button data-view="right">${t('view_right')}</button>
+              <button class="anatomy-autorotate-btn">🔄 ${isAr ? 'دوران تلقائي' : 'Auto-rotate'}</button>
             </div>
             <div class="anatomy-fps"></div>
           </div>
@@ -1840,9 +2779,37 @@ class AnatomySystem {
   }
 
   _wireViewButtons() {
-    this.container.querySelectorAll('.anatomy-viewctrl button').forEach((btn) => {
+    this.container.querySelectorAll('.anatomy-viewctrl button[data-view]').forEach((btn) => {
       btn.addEventListener('click', () => this.engine.anatomyCamera.goToPreset(btn.getAttribute('data-view')));
     });
+  }
+
+  _wireAutoRotate() {
+    const btn = this.container.querySelector('.anatomy-autorotate-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const controls = this.engine.anatomyCamera.controls;
+      controls.autoRotate = !controls.autoRotate;
+      controls.autoRotateSpeed = 1.4;
+      btn.classList.toggle('active', controls.autoRotate);
+    });
+  }
+
+  _wireGenderButtons() {
+    this.container.querySelectorAll('.anatomy-gender-btn').forEach((btn) => {
+      btn.addEventListener('click', () => this._setGender(btn.getAttribute('data-gender')));
+    });
+  }
+
+  _setGender(gender) {
+    if (this.usingRealModel || gender === this.gender) return;
+    this.gender = gender;
+    this.engine.setGender(gender);
+    this.layerSystem.refresh();
+    this._clearHighlight();
+    this.labelSystem.renderEmpty();
+    this.container.querySelectorAll('.anatomy-gender-btn').forEach((b) =>
+      b.classList.toggle('active', b.getAttribute('data-gender') === gender));
   }
 
   _wireSearch() {
@@ -2041,18 +3008,15 @@ window.AnatomyAPI = {
   on: (evt, cb) => system.on(evt, cb),
 };
 
-
-// Auto-open immediately since this page IS the anatomy viewer (no tab system here).
-window.AnatomyAPI.open({ container: 'anatomy-viewer-root', language: (new URLSearchParams(location.search).get('lang') || document.documentElement.lang || 'ar') });
-
-// Let the parent page (index.html, if embedded in an <iframe>) drive language/open/focus
-// via postMessage, so the two files stay in sync without any shared JS file.
-window.addEventListener('message', (ev) => {
-  const msg = ev.data || {};
-  if (msg.type === 'anatomy:setLanguage') location.search = '?lang=' + encodeURIComponent(msg.lang);
-  if (msg.type === 'anatomy:focusOn') window.AnatomyAPI.focusOn(msg.name);
-  if (msg.type === 'anatomy:showInjectionSite') window.AnatomyAPI.showInjectionSite(msg.site);
-});
+</script>
+<script>
+  (function waitForAnatomyAPI() {
+    if (window.AnatomyAPI) {
+      window.AnatomyAPI.open({ container: 'anatomy-viewer-root', language: window.currentLang || 'en' });
+    } else {
+      setTimeout(waitForAnatomyAPI, 100);
+    }
+  })();
 </script>
 </body>
 </html>

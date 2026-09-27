@@ -1699,6 +1699,47 @@ class AnatomyEngine {
       add(hair, 'skin_hair', 'skin');
     }
 
+    // ---- Minimal facial features (front = +z, matches VIEW_PRESETS.front) --
+    // Cheap primitives (spheres/cone/capsule/boxes) — not a sculpted face —
+    // but enough for the head to read as human rather than a blank ball.
+    const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf5f1e6, roughness: 0.25 });
+    const pupilMat = new THREE.MeshStandardMaterial({ color: 0x241a12, roughness: 0.4 });
+    const lipMat = new THREE.MeshStandardMaterial({ color: isFemale ? 0xb5665f : 0xa06a5f, roughness: 0.55 });
+
+    [-1, 1].forEach((side) => {
+      const tag = side < 0 ? 'l' : 'r';
+      const ex = side * P.headRadius * 0.40, ey = P.headY + P.headRadius * 0.06, ez = P.headRadius * 0.85;
+
+      const eyeWhite = new THREE.Mesh(new THREE.SphereGeometry(P.headRadius * 0.15, 10, 10), eyeWhiteMat);
+      eyeWhite.scale.set(1, 0.7, 0.55);
+      eyeWhite.position.set(ex, ey, ez);
+      add(eyeWhite, `skin_eye_white_${tag}`, 'skin');
+
+      const pupil = new THREE.Mesh(new THREE.SphereGeometry(P.headRadius * 0.065, 8, 8), pupilMat);
+      pupil.position.set(ex, ey, ez + P.headRadius * 0.06);
+      add(pupil, `skin_eye_pupil_${tag}`, 'skin');
+
+      const brow = new THREE.Mesh(new THREE.BoxGeometry(P.headRadius * 0.34, P.headRadius * 0.05, P.headRadius * 0.05), hairMat);
+      brow.position.set(ex, ey + P.headRadius * 0.17, ez - P.headRadius * 0.05);
+      brow.rotation.z = side * -0.1;
+      add(brow, `skin_eyebrow_${tag}`, 'skin');
+
+      const ear = new THREE.Mesh(new THREE.SphereGeometry(P.headRadius * 0.22, 10, 10), skinMat);
+      ear.scale.set(0.5, 1, 0.7);
+      ear.position.set(side * P.headRadius * 0.97, P.headY - P.headRadius * 0.03, 0);
+      add(ear, `skin_ear_${tag}`, 'skin');
+    });
+
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(P.headRadius * 0.13, P.headRadius * 0.34, 8), skinMat);
+    nose.rotation.x = Math.PI / 2.3;
+    nose.position.set(0, P.headY - P.headRadius * 0.06, P.headRadius * 0.92);
+    add(nose, 'skin_nose', 'skin');
+
+    const mouth = new THREE.Mesh(new THREE.CapsuleGeometry(P.headRadius * 0.045, P.headRadius * 0.36, 4, 8), lipMat);
+    mouth.rotation.z = Math.PI / 2;
+    mouth.position.set(0, P.headY - P.headRadius * 0.36, P.headRadius * 0.84);
+    add(mouth, 'skin_mouth', 'skin');
+
     [-1, 1].forEach((side) => {
       const tag = side < 0 ? 'l' : 'r';
       const sx = side * P.shoulder.x, ex = side * P.elbow.x, wx = side * P.wrist.x, hx = side * P.handEnd.x;
@@ -2846,18 +2887,34 @@ class AnatomySystem {
     const infoPanel = this.container.querySelector('.anatomy-info-panel');
     const injPanel = this.container.querySelector('.anatomy-injection-panel');
     const layersUI = this.container.querySelector('.anatomy-layers');
+    const genderRow = this.container.querySelector('.anatomy-gender-switch');
 
     if (mode === 'injection') {
       infoPanel.style.display = 'none';
       injPanel.style.display = 'block';
       layersUI.style.display = 'none';
       this.layerSystem.isolate('skin');
+      // data/injection-sites.js anchors are calibrated against the male
+      // placeholder proportions only. Lock to 'male' for the duration of
+      // Injection Master so needle markers land exactly on visible skin
+      // instead of floating off a female-proportioned body; restore the
+      // trainee's chosen gender when they go back to Explore.
+      if (!this.usingRealModel && this.gender !== 'male') {
+        this._genderBeforeInjection = this.gender;
+        this._setGender('male');
+      }
+      if (genderRow) genderRow.style.display = 'none';
     } else {
       infoPanel.style.display = '';
       injPanel.style.display = 'none';
       layersUI.style.display = '';
       this.injectionSystem.hide();
       this.layerSystem.setVisible('skin', true);
+      if (this._genderBeforeInjection) {
+        this._setGender(this._genderBeforeInjection);
+        this._genderBeforeInjection = null;
+      }
+      if (genderRow && !this.usingRealModel) genderRow.style.display = 'flex';
     }
   }
 
